@@ -46,6 +46,8 @@
 
   <div class="container premium-category-rail">
     <span class="premium-rail-label">Quick shop</span>
+    <a href="{{ url_for('products', category='Indoor') }}"><i class="fas fa-home"></i> Indoor</a>
+    <a href="{{ url_for('products', category='Outdoor') }}"><i class="fas fa-sun"></i> Outdoor</a>
     <a href="{{ url_for('products', category='Flowering') }}"><i class="fas fa-seedling"></i> Flowering</a>
     <a href="{{ url_for('products', category='Herbal') }}"><i class="fas fa-leaf"></i> Herbal</a>
     <a href="{{ url_for('products', category='Fruit') }}"><i class="fas fa-apple-alt"></i> Fruit</a>
@@ -100,9 +102,19 @@
         <span class="premium-section-kicker">Explore the collection</span>
         <h2>Category</h2>
       </div>
-      <p>Seven thoughtfully curated collections. Pick the one that fits your space, routine and growing style.</p>
+      <p>Nine thoughtfully curated collections. Pick the one that fits your space, routine and growing style.</p>
     </div>
     <div class="premium-category-grid">
+      <a href="{{ url_for('products', category='Indoor') }}" class="premium-category-card premium-category-featured">
+        <img src="{{ url_for('static', filename='uploads/indoor-fiddle-leaf.webp') }}" alt="Fiddle Leaf Fig indoor plant" loading="lazy" />
+        <span class="premium-category-shade"></span><span class="premium-category-count">08 varieties</span>
+        <span class="premium-category-copy"><small>Bring nature inside</small><strong>Indoor Plants</strong><b>Explore collection <i class="fas fa-arrow-right"></i></b></span>
+      </a>
+      <a href="{{ url_for('products', category='Outdoor') }}" class="premium-category-card">
+        <img src="{{ url_for('static', filename='uploads/outdoor-caladium.webp') }}" alt="Colourful Caladium outdoor plant" loading="lazy" />
+        <span class="premium-category-shade"></span><span class="premium-category-count">09 varieties</span>
+        <span class="premium-category-copy"><small>Made for sun and fresh air</small><strong>Outdoor Plants</strong><b>Shop now <i class="fas fa-arrow-right"></i></b></span>
+      </a>
       <a href="{{ url_for('products', category='Flowering') }}" class="premium-category-card premium-category-featured">
         <img src="{{ url_for('static', filename='uploads/user-flowering-rose.jpeg') }}" alt="Rose flowering plant" loading="lazy" />
         <span class="premium-category-shade"></span>

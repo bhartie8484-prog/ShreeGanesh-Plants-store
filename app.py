@@ -55,13 +55,53 @@ def ensure_catalog():
     cursor.execute("CREATE TABLE IF NOT EXISTS app_meta (`key` VARCHAR(50) PRIMARY KEY, `value` VARCHAR(50) NOT NULL)")
     cursor.execute("SELECT value FROM app_meta WHERE `key` = 'catalog_version'")
     version = cursor.fetchone()
-    if not version or version[0] != '3':
-        cursor.execute("DELETE FROM products")
-        cursor.executemany(
-            "INSERT INTO products (name, description, price, stock, image, category) VALUES (%s, %s, %s, %s, %s, %s)",
-            db_products()
-        )
-        cursor.execute("REPLACE INTO app_meta (`key`, `value`) VALUES ('catalog_version', '3')")
+    if not version or version[0] != '6':
+        # Add newly curated products without deleting products referenced by orders.
+        if version and version[0] == '4':
+            indoor_renames = {
+                'Monstera Deliciosa': 'Aloe Vera Plant',
+                'Golden Pothos': 'Golden Money Plant',
+                'Rubber Plant Indoor': 'Rubber Plant',
+                'Areca Palm': 'Money Plant',
+            }
+            for old_name, new_name in indoor_renames.items():
+                cursor.execute(
+                    "UPDATE products SET name = %s WHERE name = %s AND category = 'Indoor'",
+                    (new_name, old_name)
+                )
+        if version and version[0] == '5':
+            outdoor_renames = {
+                'Bougainvillea Outdoor': 'Caladium Plant',
+                'Neem Tree': 'Coral Bells Plant',
+                'Hibiscus Outdoor': 'Curry Leaf Plant',
+                'Jasmine Outdoor': 'Fern Plant',
+                'Rose Outdoor': 'Hosta Plant',
+                'Aloe Vera Outdoor': 'Lungwort Plant',
+                'Cactus Plant': 'Mint Plant',
+                'Jade Plant': 'Neem Plant',
+            }
+            for old_name, new_name in outdoor_renames.items():
+                cursor.execute(
+                    "UPDATE products SET name = %s WHERE name = %s AND category = 'Outdoor'",
+                    (new_name, old_name)
+                )
+        for product in db_products():
+            cursor.execute(
+                "SELECT id FROM products WHERE name = %s AND category = %s LIMIT 1",
+                (product[0], product[5])
+            )
+            existing = cursor.fetchone()
+            if existing:
+                cursor.execute(
+                    "UPDATE products SET description=%s, price=%s, stock=%s, image=%s WHERE id=%s",
+                    (product[1], product[2], product[3], product[4], existing[0])
+                )
+            else:
+                cursor.execute(
+                    "INSERT INTO products (name, description, price, stock, image, category) VALUES (%s, %s, %s, %s, %s, %s)",
+                    product
+                )
+        cursor.execute("REPLACE INTO app_meta (`key`, `value`) VALUES ('catalog_version', '6')")
         db.commit()
     cursor.close()
     catalog_ready = True

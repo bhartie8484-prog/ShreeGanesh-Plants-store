@@ -1,4 +1,4 @@
-# Plant Store - E-commerce Website 🌿
+# ShreeGanesh-Plants-store
 
 Ek modern aur professional plant store website jo **Nurserylive.com** se inspired hai. Yeh HTML, CSS, JavaScript, Python (Flask), aur MySQL use karti hai.
 

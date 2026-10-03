@@ -1,12 +1,31 @@
-"""Curated product catalogue: eight accurate items per shop category."""
+"""Curated product catalogue for every shop category."""
 
 CATEGORIES = [
-    'Flowering', 'Herbal', 'Fruit', 'Vegetable',
+    'Indoor', 'Outdoor', 'Flowering', 'Herbal', 'Fruit', 'Vegetable',
     'Decorative', 'Hanging', 'Gardening Tools'
 ]
 
 # name, description, price, stock, local image, category, Wikipedia image lookup
 CATALOG_PRODUCTS = [
+    ('Aloe Vera Plant', 'Easy-care succulent for a bright indoor window', 349, 18, 'indoor-aloe-vera.jpg', 'Indoor', 'Aloe vera'),
+    ('Fiddle Leaf Fig', 'Statement foliage plant for bright indoor corners', 1899, 10, 'indoor-fiddle-leaf.webp', 'Indoor', 'Ficus lyrata'),
+    ('Golden Money Plant', 'Golden trailing foliage for shelves and tabletops', 449, 24, 'indoor-golden-money.webp', 'Indoor', 'Epipremnum aureum'),
+    ('Money Plant', 'Easy-growing green foliage for indoor rooms', 399, 30, 'indoor-money-plant.jpg', 'Indoor', 'Epipremnum aureum'),
+    ('Peace Lily', 'Elegant white blooms for softly lit indoor spaces', 699, 20, 'indoor-peace-lily.jpg', 'Indoor', 'Spathiphyllum'),
+    ('Rubber Plant', 'Glossy broad leaves for bright indirect light', 899, 12, 'indoor-rubber.jpeg', 'Indoor', 'Ficus elastica'),
+    ('Snake Plant', 'Hardy air-purifying plant for low-light interiors', 499, 25, 'indoor-snake.jpg', 'Indoor', 'Dracaena trifasciata'),
+    ('ZZ Plant', 'Glossy low-maintenance foliage for indoor rooms', 799, 22, 'indoor-zz.webp', 'Indoor', 'Zamioculcas'),
+
+    ('Caladium Plant', 'Colourful heart-shaped foliage for shaded outdoor spaces', 549, 18, 'outdoor-caladium.webp', 'Outdoor', 'Caladium'),
+    ('Coral Bells Plant', 'Decorative foliage plant for cool garden borders', 599, 16, 'outdoor-coral-bells.jpg', 'Outdoor', 'Heuchera'),
+    ('Curry Leaf Plant', 'Aromatic curry leaves for a sunny home garden', 299, 25, 'outdoor-curry-leaf.jpeg', 'Outdoor', 'Murraya koenigii'),
+    ('Fern Plant', 'Lush green fronds for shaded patios and gardens', 449, 20, 'outdoor-fern.jpg', 'Outdoor', 'Fern'),
+    ('Hosta Plant', 'Broad ornamental leaves for shaded garden beds', 649, 14, 'outdoor-hosta.jpg', 'Outdoor', 'Hosta'),
+    ('Lungwort Plant', 'Spotted foliage and delicate blooms for cool shade', 599, 15, 'outdoor-lungwort.jpg', 'Outdoor', 'Pulmonaria'),
+    ('Mint Plant', 'Refreshing aromatic herb for outdoor pots', 149, 28, 'outdoor-mint.jpeg', 'Outdoor', 'Mentha spicata'),
+    ('Neem Plant', 'Hardy traditional tree for spacious outdoor gardens', 599, 15, 'outdoor-neem.jpeg', 'Outdoor', 'Azadirachta indica'),
+    ('Tulsi Plant', 'Sacred aromatic basil for balconies and courtyards', 199, 30, 'outdoor-tulsi.jpeg', 'Outdoor', 'Ocimum tenuiflorum'),
+
     ('Rose Plant', 'Fragrant classic rose plant for sunny balconies and gardens', 499, 20, 'user-flowering-rose.jpeg', 'Flowering', 'Rose'),
     ('Hibiscus Flower Plant', 'Tropical China rose with large colourful flowers', 399, 18, 'user-flowering-hibiscus.jpeg', 'Flowering', 'Hibiscus rosa-sinensis'),
     ('Jasmine Flower Plant', 'Mogra plant with highly fragrant white flowers', 349, 22, 'user-flowering-jasmine.jpeg', 'Flowering', 'Jasminum sambac'),
