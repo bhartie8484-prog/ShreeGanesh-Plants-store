@@ -1,0 +1,69 @@
+{% extends 'base.html' %} {% block title %}{{ product[1] }} - ShreeGanesh Plants-store{%
+endblock %} {% block content %}
+<section class="product-detail">
+  <div class="container">
+    <div class="detail-wrapper">
+      <div class="detail-image">
+        <img
+          src="{% if product[5].startswith('http') %}{{ product[5] }}{% else %}{{ url_for('static', filename='uploads/' + product[5]) }}{% endif %}"
+          alt="{{ product[1] }}"
+          loading="lazy"
+          onerror="this.src='https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=800&h=800&fit=crop'"
+        />
+      </div>
+      <div class="detail-info">
+        <h1>{{ product[1] }}</h1>
+        <p class="category"><i class="fas fa-tag"></i> {{ product[6] }}</p>
+        <p class="price">₹{{ "%.2f"|format(product[3]) }}</p>
+
+        <div class="stock-info">
+          {% if product[4] > 10 %}
+          <span class="in-stock"
+            ><i class="fas fa-check-circle"></i> In Stock ({{ product[4] }}
+            available)</span
+          >
+          {% elif product[4] > 0 %}
+          <span class="low-stock"
+            ><i class="fas fa-exclamation-circle"></i> Low Stock ({{ product[4]
+            }} left)</span
+          >
+          {% else %}
+          <span class="out-of-stock"
+            ><i class="fas fa-times-circle"></i> Out of Stock</span
+          >
+          {% endif %}
+        </div>
+
+        <div class="description">
+          <h3>Description</h3>
+          <p>{{ product[2] }}</p>
+        </div>
+
+        <div class="care-tips">
+          <h3>Care Tips</h3>
+          <ul>
+            <li>
+              <i class="fas fa-sun"></i> Place in bright, indirect sunlight
+            </li>
+            <li><i class="fas fa-tint"></i> Water when top soil is dry</li>
+            <li>
+              <i class="fas fa-temperature-high"></i> Ideal temperature: 18-24°C
+            </li>
+            <li><i class="fas fa-wind"></i> Ensure good air circulation</li>
+          </ul>
+        </div>
+
+        {% if product[4] > 0 %}
+        <form action="{{ url_for('add_to_cart', product_id=product[0]) }}" method="post">
+          <button type="submit" class="btn-add-cart">
+            <i class="fas fa-cart-plus"></i> Add to Cart
+          </button>
+        </form>
+        {% else %}
+        <button class="btn-disabled" disabled>Out of Stock</button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

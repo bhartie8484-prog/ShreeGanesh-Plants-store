@@ -1,0 +1,3 @@
+{% extends 'base.html' %}{% block title %}{{ title }} - ShreeGanesh Plants-store{% endblock %}{% block content %}
+<section class="commerce-page"><div class="container narrow"><div class="commerce-heading"><span>PLANTSTORE POLICIES</span><h1>{{ title }}</h1><p>Last updated: 3 October 2026</p></div><article class="commerce-card policy-copy"><p>{{ content }}</p><h2>Need help?</h2><p>For questions about this policy, contact our customer support team with your order number and registered email address.</p><a class="btn-primary" href="{{ url_for('contact') }}">Contact support</a></article></div></section>
+{% endblock %}

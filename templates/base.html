@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {% block title %}ShreeGanesh Plants-store - India's Largest Gardening Store{% endblock
+      %}
+    </title>
+    <meta
+      name="description"
+      content="Buy 6000+ live plants, seeds, pots, and garden supplies online. Free shipping, 100% guarantee, expert support."
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="container">
+        <div class="nav-wrapper">
+          <a href="{{ url_for('index') }}" class="logo">
+            <i class="fas fa-leaf"></i>
+            <span>ShreeGanesh Plants-store</span>
+          </a>
+          <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation menu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <ul class="nav-menu" id="primary-navigation">
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('products') }}">All Plants</a></li>
+            <li><a href="{{ url_for('about') }}">About</a></li>
+            <li><a href="{{ url_for('contact') }}">Contact</a></li>
+            {% if session.user_id %}
+            <li>
+              <a href="{{ url_for('cart') }}"
+                ><i class="fas fa-shopping-cart"></i> Cart</a
+              >
+            </li>
+            <li>
+              <a href="{{ url_for('logout') }}"
+                >Hi, {{ session.user_name.split()[0] }}</a
+              >
+            </li>
+            <li><a href="{{ url_for('orders') }}">Orders</a></li>
+            {% else %}
+            <li><a href="{{ url_for('login') }}">Login</a></li>
+            <li>
+              <a href="{{ url_for('register') }}" class="btn-primary"
+                >Sign Up</a
+              >
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %}
+    <div class="flash-container">
+      {% for category, message in messages %}
+      <div class="flash flash-{{ category }}">
+        {{ message }}
+        <button class="flash-close">&times;</button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %} {% endwith %}
+
+    <!-- Main Content -->
+    <main>{% block content %}{% endblock %}</main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3><i class="fas fa-leaf"></i> ShreeGanesh Plants-store</h3>
+            <p>
+              India's largest gardening store with 6000+ live plants and seeds.
+              Your trusted partner for all gardening needs.
+            </p>
+            <div class="social-links" style="margin-top: 1.5rem">
+              <a href="#" aria-label="Facebook"
+                ><i class="fab fa-facebook"></i
+              ></a>
+              <a href="#" aria-label="Instagram"
+                ><i class="fab fa-instagram"></i
+              ></a>
+              <a href="#" aria-label="Twitter"
+                ><i class="fab fa-twitter"></i
+              ></a>
+              <a href="#" aria-label="YouTube"
+                ><i class="fab fa-youtube"></i
+              ></a>
+            </div>
+          </div>
+          <div class="footer-section">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="{{ url_for('index') }}">Home</a></li>
+              <li><a href="{{ url_for('products') }}">Shop Plants</a></li>
+              <li><a href="{{ url_for('contact') }}">Contact Us</a></li>
+              <li><a href="{{ url_for('about') }}">About Us</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h4>Categories</h4>
+            <ul>
+              <li><a href="{{ url_for('products', category='Flowering') }}">Flowering Plants</a></li>
+              <li><a href="{{ url_for('products', category='Herbal') }}">Herbal Plants</a></li>
+              <li><a href="{{ url_for('products', category='Fruit') }}">Fruit Plants</a></li>
+              <li><a href="{{ url_for('products', category='Gardening Tools') }}">Gardening Tools</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h4>Customer Service</h4>
+            <ul>
+              <li><a href="{{ url_for('policy', slug='shipping-policy') }}">Shipping Policy</a></li>
+              <li><a href="{{ url_for('policy', slug='return-policy') }}">Return Policy</a></li>
+              <li><a href="{{ url_for('faq') }}">FAQ</a></li>
+              <li><a href="{{ url_for('track_order') }}">Track Order</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>
+            &copy; 2026 ShreeGanesh Plants-store. All rights reserved. ·
+            <a href="{{ url_for('policy', slug='privacy-policy') }}">Privacy</a> ·
+            <a href="{{ url_for('policy', slug='terms') }}">Terms</a>
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  </body>
+</html>

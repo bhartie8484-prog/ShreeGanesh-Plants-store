@@ -1,0 +1,74 @@
+{% extends 'base.html' %} {% block title %}Shopping Cart - ShreeGanesh Plants-store{% endblock %} {% block content %}
+<section class="cart-section">
+  <div class="container">
+    <div class="cart-heading">
+      <div>
+        <p class="cart-eyebrow">YOUR SELECTION</p>
+        <h1 class="page-title">Shopping Cart</h1>
+      </div>
+      {% if cart_items %}
+      <a href="{{ url_for('products') }}" class="cart-continue-link">Continue shopping <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+      {% endif %}
+    </div>
+
+    {% if cart_items %}
+    <div class="cart-wrapper">
+      <div class="cart-items">
+        {% for item in cart_items %}
+        <div class="cart-item">
+          <img
+            src="{% if item[4].startswith('http') %}{{ item[4] }}{% else %}{{ url_for('static', filename='uploads/' + item[4]) }}{% endif %}"
+            alt="{{ item[1] }}"
+            loading="lazy"
+            onerror="this.src='https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400&h=400&fit=crop'"
+          />
+          <div class="item-details">
+            <h3>{{ item[1] }}</h3>
+            <p class="item-price">₹{{ "%.2f"|format(item[2]) }}</p>
+            <form class="quantity-form" action="{{ url_for('update_cart', cart_id=item[0]) }}" method="post">
+              <label for="quantity-{{ item[0] }}">Quantity</label>
+              <input id="quantity-{{ item[0] }}" name="quantity" type="number" min="1" value="{{ item[3] }}" required />
+              <button class="cart-update-button" type="submit">Update</button>
+            </form>
+          </div>
+          <div class="item-total">
+            <p>₹{{ "%.2f"|format(item[2] * item[3]) }}</p>
+            <form action="{{ url_for('remove_from_cart', cart_id=item[0]) }}" method="post">
+              <button class="cart-remove-button" type="submit" aria-label="Remove {{ item[1] }} from cart" title="Remove item">
+                <i class="fas fa-trash-alt" aria-hidden="true"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="cart-summary">
+        <h2>Order Summary</h2>
+        <div class="summary-row">
+          <span>Subtotal:</span>
+          <span>₹{{ "%.2f"|format(total) }}</span>
+        </div>
+        <div class="summary-row">
+          <span>Shipping:</span>
+          <span>{% if total > 999 %}Free{% else %}₹50.00{% endif %}</span>
+        </div>
+        <div class="summary-row total">
+          <span>Total:</span>
+          <span>₹{{ "%.2f"|format(total if total > 999 else total + 50) }}</span>
+        </div>
+        <a href="{{ url_for('checkout') }}" class="btn-checkout checkout-link">Proceed to Checkout</a>
+        <p class="shipping-note">{% if total > 999 %}Your order qualifies for free shipping.{% else %}Free shipping on orders above ₹999.{% endif %}</p>
+      </div>
+    </div>
+    {% else %}
+    <div class="empty-cart">
+      <i class="fas fa-shopping-cart"></i>
+      <h2>Your cart is empty</h2>
+      <p>Add some beautiful plants to your cart!</p>
+      <a href="{{ url_for('products') }}" class="btn-primary">Shop Now</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
