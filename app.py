@@ -144,7 +144,8 @@ class PostgresCursorAdapter:
             'INSERT INTO app_meta ("key", "value") VALUES (\'catalog_version\', \'7\') '
             'ON CONFLICT ("key") DO UPDATE SET "value" = EXCLUDED."value"'
         )
-        if query.lstrip().upper().startswith('INSERT INTO ORDERS ') and ' RETURNING ' not in query.upper():
+        returning_id_inserts = ('INSERT INTO ORDERS ', 'INSERT INTO USERS ')
+        if query.lstrip().upper().startswith(returning_id_inserts) and ' RETURNING ' not in query.upper():
             query = f"{query} RETURNING id"
             self.cursor.execute(query, params)
             self._lastrowid = self.cursor.fetchone()[0]
@@ -522,6 +523,9 @@ def prepare_catalog():
         return
     ensure_store_schema()
     ensure_catalog()
+    public_endpoints = {'register', 'login'}
+    if 'user_id' not in session and request.endpoint not in public_endpoints:
+        return redirect(url_for('register'))
 
 @app.route('/health')
 def health():
@@ -593,6 +597,8 @@ def product_detail(id):
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    if 'user_id' in session:
+        return redirect(url_for('index'))
     if request.method == 'POST':
         name = request.form['name']
         email = request.form['email']
@@ -608,16 +614,21 @@ def register():
             cursor.close()
             flash('An account with this email already exists.', 'error')
             return render_template('register.html')
+        user_id = cursor.lastrowid
         db.commit()
         cursor.close()
-        
-        flash('Registration successful! Please login.', 'success')
-        return redirect(url_for('login'))
+
+        session['user_id'] = user_id
+        session['user_name'] = name
+        flash('Registration successful!', 'success')
+        return redirect(url_for('index'))
     
     return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if 'user_id' in session:
+        return redirect(url_for('index'))
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
