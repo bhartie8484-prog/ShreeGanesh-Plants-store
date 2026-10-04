@@ -88,6 +88,35 @@
     <!-- Main Content -->
     <main>{% block content %}{% endblock %}</main>
 
+    {% if not session.user_id and request.endpoint not in ['register', 'login'] %}
+    <div class="auth-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="signup-modal-title">
+      <div class="auth-modal">
+        <div class="auth-modal-brand">
+          <span><i class="fas fa-leaf"></i></span>
+          <strong>ShreeGanesh Plants Store</strong>
+        </div>
+        <h2 id="signup-modal-title">Create your account</h2>
+        <p>Sign up first to browse plants, add items to cart, and place orders.</p>
+        <form method="POST" action="{{ url_for('register') }}" class="auth-modal-form">
+          <div class="form-group">
+            <label for="modal-name"><i class="fas fa-user"></i> Full Name</label>
+            <input type="text" id="modal-name" name="name" required placeholder="Enter your full name" autocomplete="name">
+          </div>
+          <div class="form-group">
+            <label for="modal-email"><i class="fas fa-envelope"></i> Email</label>
+            <input type="email" id="modal-email" name="email" required placeholder="Enter your email" autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label for="modal-password"><i class="fas fa-lock"></i> Password</label>
+            <input type="password" id="modal-password" name="password" required placeholder="Create a password" autocomplete="new-password">
+          </div>
+          <button type="submit" class="auth-modal-submit">Sign Up & Continue</button>
+        </form>
+        <p class="auth-modal-login">Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+      </div>
+    </div>
+    {% endif %}
+
     <!-- Footer -->
     <footer class="footer premium-footer">
       <div class="container">

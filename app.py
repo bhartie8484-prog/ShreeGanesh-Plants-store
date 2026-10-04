@@ -523,9 +523,9 @@ def prepare_catalog():
         return
     ensure_store_schema()
     ensure_catalog()
-    public_endpoints = {'register', 'login'}
+    public_endpoints = {'index', 'register', 'login'}
     if 'user_id' not in session and request.endpoint not in public_endpoints:
-        return redirect(url_for('register'))
+        return redirect(url_for('index'))
 
 @app.route('/health')
 def health():

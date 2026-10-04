@@ -1199,6 +1199,93 @@ body {
   font-weight: 600;
 }
 
+.auth-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(15, 40, 24, 0.68);
+  backdrop-filter: blur(8px);
+}
+
+.auth-modal {
+  width: min(100%, 470px);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  background: var(--white);
+  border: 1px solid rgba(104, 185, 132, 0.35);
+  border-radius: 18px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+  padding: 32px;
+}
+
+.auth-modal-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--primary-color);
+  margin-bottom: 18px;
+}
+
+.auth-modal-brand span {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+}
+
+.auth-modal h2 {
+  color: var(--primary-color);
+  font-size: 2rem;
+  line-height: 1.15;
+  margin-bottom: 10px;
+}
+
+.auth-modal p {
+  color: var(--text-light);
+  margin-bottom: 20px;
+}
+
+.auth-modal-form .form-group {
+  margin-bottom: 16px;
+}
+
+.auth-modal-submit {
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  padding: 14px 18px;
+  background: var(--primary-color);
+  color: var(--white);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.auth-modal-submit:hover {
+  background: var(--secondary-color);
+  transform: translateY(-1px);
+}
+
+.auth-modal-login {
+  text-align: center;
+  margin: 18px 0 0;
+}
+
+.auth-modal-login a {
+  color: var(--secondary-color);
+  font-weight: 700;
+  text-decoration: none;
+}
+
 /* Contact */
 .contact-section {
   padding: 4rem 0;
@@ -2252,4 +2339,19 @@ button {
   .order-meta, .order-card { grid-template-columns: 1fr; }
   .tracking-form > div { flex-direction: column; }
   .content-hero { padding: 4rem 0; }
+}
+
+@media (max-width: 540px) {
+  .auth-modal-overlay {
+    padding: 14px;
+  }
+
+  .auth-modal {
+    padding: 24px 18px;
+    border-radius: 14px;
+  }
+
+  .auth-modal h2 {
+    font-size: 1.6rem;
+  }
 }
