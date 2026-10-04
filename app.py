@@ -3,21 +3,54 @@ import pymysql
 import os
 import uuid
 from datetime import datetime
+from urllib.parse import urlparse, unquote
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from werkzeug.middleware.proxy_fix import ProxyFix
 from catalog import CATEGORIES, db_products
 
 app = Flask(__name__)
-app.secret_key = 'development-only-change-me'
+app.secret_key = os.environ.get('SECRET_KEY', 'development-only-change-me')
+if os.environ.get('RENDER'):
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
+    app.config.update(
+        SESSION_COOKIE_SECURE=True,
+        SESSION_COOKIE_HTTPONLY=True,
+        SESSION_COOKIE_SAMESITE='Lax',
+    )
 
 # MySQL Configuration
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'plant_store'
+app.config['MYSQL_PORT'] = 3306
 
 # Machine-specific credentials live in an ignored local config file.
 app.config.from_pyfile('config/local.py', silent=True)
+
+# Production credentials are supplied by the hosting provider. DATABASE_URL
+# takes priority, while individual MYSQL_* variables remain supported.
+database_url = os.environ.get('DATABASE_URL')
+if database_url:
+    parsed_db_url = urlparse(database_url)
+    if parsed_db_url.scheme not in ('mysql', 'mysql+pymysql'):
+        raise RuntimeError('DATABASE_URL must use mysql:// or mysql+pymysql://')
+    app.config.update(
+        MYSQL_HOST=parsed_db_url.hostname,
+        MYSQL_PORT=parsed_db_url.port or 3306,
+        MYSQL_USER=unquote(parsed_db_url.username or ''),
+        MYSQL_PASSWORD=unquote(parsed_db_url.password or ''),
+        MYSQL_DB=parsed_db_url.path.lstrip('/'),
+    )
+else:
+    app.config.update(
+        MYSQL_HOST=os.environ.get('MYSQL_HOST', app.config['MYSQL_HOST']),
+        MYSQL_PORT=int(os.environ.get('MYSQL_PORT', app.config['MYSQL_PORT'])),
+        MYSQL_USER=os.environ.get('MYSQL_USER', app.config['MYSQL_USER']),
+        MYSQL_PASSWORD=os.environ.get('MYSQL_PASSWORD', app.config['MYSQL_PASSWORD']),
+        MYSQL_DB=os.environ.get('MYSQL_DB', app.config['MYSQL_DB']),
+    )
 
 # Upload Configuration
 UPLOAD_FOLDER = 'static/uploads'
@@ -28,11 +61,13 @@ def get_db():
     if 'db' not in g:
         g.db = pymysql.connect(
             host=app.config['MYSQL_HOST'],
+            port=app.config['MYSQL_PORT'],
             user=app.config['MYSQL_USER'],
             password=app.config['MYSQL_PASSWORD'],
             database=app.config['MYSQL_DB'],
             charset='utf8mb4',
             autocommit=False,
+            connect_timeout=10,
         )
     return g.db
 
@@ -163,8 +198,16 @@ def ensure_store_schema():
 
 @app.before_request
 def prepare_catalog():
+    # Static assets and the platform health check must remain available even
+    # when the database is temporarily unavailable.
+    if request.endpoint in ('static', 'health'):
+        return
     ensure_catalog()
     ensure_store_schema()
+
+@app.route('/health')
+def health():
+    return {'status': 'ok'}, 200
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
