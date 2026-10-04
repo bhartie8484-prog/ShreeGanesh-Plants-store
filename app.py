@@ -290,7 +290,14 @@ def prepare_catalog():
 
 @app.route('/health')
 def health():
-    return {'status': 'ok'}, 200
+    try:
+        cursor = get_db().cursor()
+        cursor.execute('SELECT 1')
+        cursor.close()
+        return {'status': 'ok', 'database': 'connected'}, 200
+    except pymysql.MySQLError:
+        app.logger.exception('Database health check failed')
+        return {'status': 'error', 'database': 'unavailable'}, 503
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
