@@ -547,6 +547,8 @@ def allowed_file(filename):
 
 @app.route('/')
 def index():
+    if 'user_id' in session and not session.pop('allow_home_after_auth', False):
+        session.clear()
     cursor = get_db().cursor()
     cursor.execute("SELECT * FROM products WHERE stock > 0 ORDER BY RAND()")
     all_products = cursor.fetchall()
@@ -620,6 +622,7 @@ def register():
 
         session['user_id'] = user_id
         session['user_name'] = name
+        session['allow_home_after_auth'] = True
         flash('Registration successful!', 'success')
         return redirect(url_for('index'))
     
@@ -641,6 +644,7 @@ def login():
         if user and check_password_hash(user[3], password):
             session['user_id'] = user[0]
             session['user_name'] = user[1]
+            session['allow_home_after_auth'] = True
             flash('Login successful!', 'success')
             return redirect(url_for('index'))
         else:
