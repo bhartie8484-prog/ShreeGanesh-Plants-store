@@ -3,7 +3,7 @@ import pymysql
 import os
 import uuid
 from datetime import datetime
-from urllib.parse import urlparse, unquote
+from urllib.parse import urlparse, unquote, parse_qs
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -43,6 +43,11 @@ if database_url:
         MYSQL_PASSWORD=unquote(parsed_db_url.password or ''),
         MYSQL_DB=parsed_db_url.path.lstrip('/'),
     )
+    database_query = parse_qs(parsed_db_url.query)
+    app.config['MYSQL_SSL'] = (
+        database_query.get('ssl-mode', [''])[0].lower() in ('required', 'verify_ca', 'verify_identity')
+        or database_query.get('ssl', [''])[0].lower() in ('1', 'true', 'required')
+    )
 else:
     app.config.update(
         MYSQL_HOST=os.environ.get('MYSQL_HOST', app.config['MYSQL_HOST']),
@@ -51,6 +56,7 @@ else:
         MYSQL_PASSWORD=os.environ.get('MYSQL_PASSWORD', app.config['MYSQL_PASSWORD']),
         MYSQL_DB=os.environ.get('MYSQL_DB', app.config['MYSQL_DB']),
     )
+    app.config['MYSQL_SSL'] = os.environ.get('MYSQL_SSL', '').lower() in ('1', 'true', 'required')
 
 # Upload Configuration
 UPLOAD_FOLDER = 'static/uploads'
@@ -59,7 +65,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 def get_db():
     if 'db' not in g:
-        g.db = pymysql.connect(
+        connection_options = dict(
             host=app.config['MYSQL_HOST'],
             port=app.config['MYSQL_PORT'],
             user=app.config['MYSQL_USER'],
@@ -69,6 +75,9 @@ def get_db():
             autocommit=False,
             connect_timeout=10,
         )
+        if app.config.get('MYSQL_SSL'):
+            connection_options['ssl'] = {'check_hostname': True}
+        g.db = pymysql.connect(**connection_options)
     return g.db
 
 @app.teardown_appcontext
@@ -163,6 +172,80 @@ def ensure_store_schema():
         return
     db = get_db()
     cursor = db.cursor()
+    # A fresh production database is initialized automatically. All statements
+    # are idempotent, so they are also safe for existing installations.
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(100) NOT NULL,
+            email VARCHAR(100) UNIQUE NOT NULL,
+            password VARCHAR(255) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS products (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(100) NOT NULL,
+            description TEXT,
+            price DECIMAL(10,2) NOT NULL,
+            stock INT DEFAULT 0,
+            image VARCHAR(255),
+            category VARCHAR(50),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS cart (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT NOT NULL,
+            product_id INT NOT NULL,
+            quantity INT DEFAULT 1,
+            added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE KEY unique_user_product (user_id, product_id),
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+        )
+    """)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS orders (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT NOT NULL,
+            total_amount DECIMAL(10,2) NOT NULL,
+            status VARCHAR(50) DEFAULT 'pending',
+            order_number VARCHAR(32) UNIQUE,
+            payment_method VARCHAR(30),
+            payment_status VARCHAR(30) DEFAULT 'pending',
+            shipping_name VARCHAR(100),
+            shipping_phone VARCHAR(20),
+            shipping_address TEXT,
+            shipping_city VARCHAR(80),
+            shipping_state VARCHAR(80),
+            shipping_pincode VARCHAR(10),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+    """)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS order_items (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            order_id INT NOT NULL,
+            product_id INT NOT NULL,
+            quantity INT NOT NULL,
+            price DECIMAL(10,2) NOT NULL,
+            FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+            FOREIGN KEY (product_id) REFERENCES products(id)
+        )
+    """)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS contacts (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(100) NOT NULL,
+            email VARCHAR(100) NOT NULL,
+            message TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
     additions = [
         "ADD COLUMN order_number VARCHAR(32) UNIQUE",
         "ADD COLUMN payment_method VARCHAR(30)",
@@ -202,8 +285,8 @@ def prepare_catalog():
     # when the database is temporarily unavailable.
     if request.endpoint in ('static', 'health'):
         return
-    ensure_catalog()
     ensure_store_schema()
+    ensure_catalog()
 
 @app.route('/health')
 def health():
