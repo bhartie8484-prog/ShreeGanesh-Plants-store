@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
-      {% block title %}ShreeGanesh Plants-store - India's Largest Gardening Store{% endblock
-      %}
+      {% block title %}ShreeGanesh Plants Store - India's Largest Gardening
+      Store{% endblock %}
     </title>
     <meta
       name="description"
@@ -29,9 +29,15 @@
         <div class="nav-wrapper">
           <a href="{{ url_for('index') }}" class="logo">
             <i class="fas fa-leaf"></i>
-            <span>ShreeGanesh Plants-store</span>
+            <span>ShreeGanesh Plants Store</span>
           </a>
-          <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation" aria-label="Open navigation menu">
+          <button
+            class="nav-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="primary-navigation"
+            aria-label="Open navigation menu"
+          >
             <span></span>
             <span></span>
             <span></span>
@@ -83,11 +89,32 @@
     <main>{% block content %}{% endblock %}</main>
 
     <!-- Footer -->
+    <footer class="footer premium-footer">
+      <div class="container">
+        <div class="footer-promises" aria-label="Our service promises">
+          <div class="footer-promise"><i class="fas fa-truck"></i><span><strong>Pan-India delivery</strong><small>Carefully packed at every step</small></span></div>
+          <div class="footer-promise"><i class="fas fa-seedling"></i><span><strong>Healthy plants</strong><small>Handpicked by plant experts</small></span></div>
+          <div class="footer-promise"><i class="fas fa-headset"></i><span><strong>Plant care support</strong><small>Guidance whenever you need it</small></span></div>
+        </div>
+        <div class="footer-content premium-footer-content">
+          <div class="footer-section footer-brand">
+            <a href="{{ url_for('index') }}" class="footer-logo"><span class="footer-logo-mark"><i class="fas fa-leaf"></i></span><span>ShreeGanesh<small>Plants Store</small></span></a>
+            <p>Thoughtfully grown plants and dependable gardening essentials, delivered from our nursery to your home.</p>
+            <div class="social-links"><a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a><a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a><a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a><a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a></div>
+          </div>
+          <div class="footer-section footer-links"><h4>Quick Links</h4><ul><li><a href="{{ url_for('index') }}">Home</a></li><li><a href="{{ url_for('products') }}">Shop Plants</a></li><li><a href="{{ url_for('contact') }}">Contact Us</a></li><li><a href="{{ url_for('about') }}">About Us</a></li></ul></div>
+          <div class="footer-section footer-links"><h4>Categories</h4><ul><li><a href="{{ url_for('products', category='Flowering') }}">Flowering Plants</a></li><li><a href="{{ url_for('products', category='Herbal') }}">Herbal Plants</a></li><li><a href="{{ url_for('products', category='Fruit') }}">Fruit Plants</a></li><li><a href="{{ url_for('products', category='Gardening Tools') }}">Gardening Tools</a></li></ul></div>
+          <div class="footer-section footer-links"><h4>Customer Care</h4><ul><li><a href="{{ url_for('policy', slug='shipping-policy') }}">Shipping Policy</a></li><li><a href="{{ url_for('policy', slug='return-policy') }}">Return Policy</a></li><li><a href="{{ url_for('faq') }}">FAQ</a></li><li><a href="{{ url_for('track_order') }}">Track Order</a></li></ul></div>
+          <div class="footer-section footer-contact"><span class="footer-contact-kicker">WE'RE HERE TO HELP</span><h4>Let's grow together.</h4><a class="footer-contact-item" href="tel:+919767873001"><i class="fas fa-phone-alt"></i><span><small>Call us</small>+91 9767873001</span></a><a class="footer-contact-item" href="mailto:bharti8484k@gmail.com"><i class="fas fa-envelope"></i><span><small>Email us</small>bharti8484k@gmail.com</span></a><div class="footer-contact-item"><i class="fas fa-map-marker-alt"></i><span><small>Visit us</small>Shanivar Peth, Pune - 411030</span></div></div>
+        </div>
+        <div class="footer-bottom premium-footer-bottom"><p>&copy; 2026 ShreeGanesh Plants Store. All rights reserved.</p><div class="footer-legal"><a href="{{ url_for('policy', slug='privacy-policy') }}">Privacy Policy</a><a href="{{ url_for('policy', slug='terms') }}">Terms &amp; Conditions</a></div><div class="footer-payments"><span><i class="fas fa-lock"></i> Secure payments</span><i class="fab fa-cc-visa"></i><i class="fab fa-cc-mastercard"></i><i class="fas fa-university"></i></div></div>
+      </div>
+    </footer>
     <footer class="footer">
       <div class="container">
         <div class="footer-content">
           <div class="footer-section">
-            <h3><i class="fas fa-leaf"></i> ShreeGanesh Plants-store</h3>
+            <h3><i class="fas fa-leaf"></i> ShreeGanesh Plants Store</h3>
             <p>
               India's largest gardening store with 6000+ live plants and seeds.
               Your trusted partner for all gardening needs.
@@ -119,26 +146,107 @@
           <div class="footer-section">
             <h4>Categories</h4>
             <ul>
-              <li><a href="{{ url_for('products', category='Flowering') }}">Flowering Plants</a></li>
-              <li><a href="{{ url_for('products', category='Herbal') }}">Herbal Plants</a></li>
-              <li><a href="{{ url_for('products', category='Fruit') }}">Fruit Plants</a></li>
-              <li><a href="{{ url_for('products', category='Gardening Tools') }}">Gardening Tools</a></li>
+              <li>
+                <a href="{{ url_for('products', category='Flowering') }}"
+                  >Flowering Plants</a
+                >
+              </li>
+              <li>
+                <a href="{{ url_for('products', category='Herbal') }}"
+                  >Herbal Plants</a
+                >
+              </li>
+              <li>
+                <a href="{{ url_for('products', category='Fruit') }}"
+                  >Fruit Plants</a
+                >
+              </li>
+              <li>
+                <a href="{{ url_for('products', category='Gardening Tools') }}"
+                  >Gardening Tools</a
+                >
+              </li>
             </ul>
           </div>
           <div class="footer-section">
             <h4>Customer Service</h4>
             <ul>
-              <li><a href="{{ url_for('policy', slug='shipping-policy') }}">Shipping Policy</a></li>
-              <li><a href="{{ url_for('policy', slug='return-policy') }}">Return Policy</a></li>
+              <li>
+                <a href="{{ url_for('policy', slug='shipping-policy') }}"
+                  >Shipping Policy</a
+                >
+              </li>
+              <li>
+                <a href="{{ url_for('policy', slug='return-policy') }}"
+                  >Return Policy</a
+                >
+              </li>
               <li><a href="{{ url_for('faq') }}">FAQ</a></li>
               <li><a href="{{ url_for('track_order') }}">Track Order</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h4>Contact Info</h4>
+            <ul style="list-style: none; padding: 0">
+              <li style="margin-bottom: 1rem">
+                <i
+                  class="fas fa-map-marker-alt"
+                  style="margin-right: 0.5rem; color: #4caf50"
+                ></i>
+                <strong>Address:</strong><br />
+                <span
+                  style="
+                    padding-left: 1.5rem;
+                    display: inline-block;
+                    margin-top: 0.25rem;
+                  "
+                  >Shanivar Peth, Pune - 411030</span
+                >
+              </li>
+              <li style="margin-bottom: 1rem">
+                <i
+                  class="fas fa-phone"
+                  style="margin-right: 0.5rem; color: #4caf50"
+                ></i>
+                <strong>Phone:</strong><br />
+                <a
+                  href="tel:+919767873001"
+                  style="
+                    padding-left: 1.5rem;
+                    display: inline-block;
+                    margin-top: 0.25rem;
+                    color: inherit;
+                    text-decoration: none;
+                  "
+                  >+91 9767873001</a
+                >
+              </li>
+              <li>
+                <i
+                  class="fas fa-envelope"
+                  style="margin-right: 0.5rem; color: #4caf50"
+                ></i>
+                <strong>Email:</strong><br />
+                <a
+                  href="mailto:bharti8484k@gmail.com"
+                  style="
+                    padding-left: 1.5rem;
+                    display: inline-block;
+                    margin-top: 0.25rem;
+                    color: inherit;
+                    text-decoration: none;
+                  "
+                  >bharti8484k@gmail.com</a
+                >
+              </li>
             </ul>
           </div>
         </div>
         <div class="footer-bottom">
           <p>
-            &copy; 2026 ShreeGanesh Plants-store. All rights reserved. ·
-            <a href="{{ url_for('policy', slug='privacy-policy') }}">Privacy</a> ·
+            &copy; 2026 ShreeGanesh Plants Store. All rights reserved. ·
+            <a href="{{ url_for('policy', slug='privacy-policy') }}">Privacy</a>
+            ·
             <a href="{{ url_for('policy', slug='terms') }}">Terms</a>
           </p>
         </div>

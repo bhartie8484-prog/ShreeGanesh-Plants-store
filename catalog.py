@@ -80,14 +80,17 @@ CATALOG_PRODUCTS = [
     ('Philodendron Hanging Plant', 'Easy-care trailing greenery for indoor spaces', 499, 20, 'user-hanging-philodendron.webp', 'Hanging', 'Philodendron'),
     ('Spider Plant Hanging Pot', 'Arching striped foliage with baby plants', 349, 24, 'user-hanging-spider.jpeg', 'Hanging', 'Chlorophytum comosum'),
 
-    ('Gardening Pruner', 'Sharp hand pruner for clean stem cutting', 599, 20, 'user-tool-pruner.jpeg', 'Gardening Tools', 'Pruning shears'),
-    ('Garden Spade', 'Sturdy digging spade for beds and borders', 799, 15, 'user-tool-spade.jpeg', 'Gardening Tools', 'Spade'),
-    ('Gardening Axe', 'Strong garden axe for woody branches', 899, 12, 'user-tool-axe.jpeg', 'Gardening Tools', 'Axe'),
-    ('Gardening Hoe', 'Reliable hoe for loosening soil and weeding', 649, 18, 'user-tool-hoe.jpeg', 'Gardening Tools', 'Hoe (tool)'),
-    ('Garden Rake', 'Durable rake for levelling soil and clearing leaves', 749, 14, 'user-tool-rake.jpeg', 'Gardening Tools', 'Rake (tool)'),
-    ('Gardening Watering Can', 'Balanced watering can for pots and garden beds', 499, 24, 'user-tool-watering-can.jpeg', 'Gardening Tools', 'Watering can'),
-    ('Gardening Scissor', 'Handy garden scissor for light trimming', 399, 22, 'user-tool-scissor.jpeg', 'Gardening Tools', 'Pruning shears'),
-    ('Gardening Gloves', 'Protective reusable gloves for soil and plant care', 249, 35, 'user-tool-gloves.jpeg', 'Gardening Tools', 'Garden glove'),
+    ('Pruner', 'Sharp hand pruner for clean stem cutting', 599, 20, 'user-tool-pruner.jpeg', 'Gardening Tools', 'Pruning shears'),
+    ('Spade', 'Sturdy digging spade for beds and borders', 799, 15, 'user-tool-spade.jpeg', 'Gardening Tools', 'Spade'),
+    ('Axe', 'Strong garden axe for woody branches', 899, 12, 'user-tool-axe.jpeg', 'Gardening Tools', 'Axe'),
+    ('Hoe', 'Reliable hoe for loosening soil and weeding', 649, 18, 'user-tool-hoe.jpeg', 'Gardening Tools', 'Hoe (tool)'),
+    ('Rake', 'Durable rake for levelling soil and clearing leaves', 749, 14, 'user-tool-rake.jpeg', 'Gardening Tools', 'Rake (tool)'),
+    ('Watering Can', 'Balanced watering can for pots and garden beds', 499, 24, 'user-tool-watering-can.jpeg', 'Gardening Tools', 'Watering can'),
+    ('Scissor', 'Handy garden scissor for light trimming', 399, 22, 'user-tool-scissor.jpeg', 'Gardening Tools', 'Pruning shears'),
+    ('Gloves', 'Protective reusable gloves for soil and plant care', 249, 35, 'user-tool-gloves.jpeg', 'Gardening Tools', 'Garden glove'),
+    ('Sickle', 'Curved hand tool for cutting grass and light harvesting', 449, 18, 'user-tool-sickle.jpeg', 'Gardening Tools', 'Sickle'),
+    ('Trowel', 'Compact hand trowel for potting and transplanting', 299, 28, 'user-tool-trowel.jpeg', 'Gardening Tools', 'Trowel'),
+    ('Hedge Shears', 'Long-blade shears for shaping hedges and shrubs', 999, 10, 'user-tool-hedge-shears.jpeg', 'Gardening Tools', 'Hedge shears'),
 ]
 
 def db_products():

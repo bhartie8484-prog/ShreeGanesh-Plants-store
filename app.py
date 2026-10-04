@@ -55,7 +55,7 @@ def ensure_catalog():
     cursor.execute("CREATE TABLE IF NOT EXISTS app_meta (`key` VARCHAR(50) PRIMARY KEY, `value` VARCHAR(50) NOT NULL)")
     cursor.execute("SELECT value FROM app_meta WHERE `key` = 'catalog_version'")
     version = cursor.fetchone()
-    if not version or version[0] != '6':
+    if not version or version[0] != '7':
         # Add newly curated products without deleting products referenced by orders.
         if version and version[0] == '4':
             indoor_renames = {
@@ -85,6 +85,22 @@ def ensure_catalog():
                     "UPDATE products SET name = %s WHERE name = %s AND category = 'Outdoor'",
                     (new_name, old_name)
                 )
+        if version and version[0] == '6':
+            tool_renames = {
+                'Gardening Pruner': 'Pruner',
+                'Garden Spade': 'Spade',
+                'Gardening Axe': 'Axe',
+                'Gardening Hoe': 'Hoe',
+                'Garden Rake': 'Rake',
+                'Gardening Watering Can': 'Watering Can',
+                'Gardening Scissor': 'Scissor',
+                'Gardening Gloves': 'Gloves',
+            }
+            for old_name, new_name in tool_renames.items():
+                cursor.execute(
+                    "UPDATE products SET name = %s WHERE name = %s AND category = 'Gardening Tools'",
+                    (new_name, old_name)
+                )
         for product in db_products():
             cursor.execute(
                 "SELECT id FROM products WHERE name = %s AND category = %s LIMIT 1",
@@ -101,7 +117,7 @@ def ensure_catalog():
                     "INSERT INTO products (name, description, price, stock, image, category) VALUES (%s, %s, %s, %s, %s, %s)",
                     product
                 )
-        cursor.execute("REPLACE INTO app_meta (`key`, `value`) VALUES ('catalog_version', '6')")
+        cursor.execute("REPLACE INTO app_meta (`key`, `value`) VALUES ('catalog_version', '7')")
         db.commit()
     cursor.close()
     catalog_ready = True
@@ -175,7 +191,14 @@ def products():
     category = request.args.get('category', None)
     cursor = get_db().cursor()
     
-    if category:
+    if category == 'Flowering':
+        cursor.execute(
+            """SELECT * FROM products
+               WHERE stock > 0 AND category = %s
+               AND name NOT IN (%s, %s, %s)""",
+            (category, 'Bougainvillea', 'Chrysanthemum', 'Dahlia Plant')
+        )
+    elif category:
         cursor.execute("SELECT * FROM products WHERE stock > 0 AND category = %s", (category,))
     else:
         cursor.execute("SELECT * FROM products WHERE stock > 0")
