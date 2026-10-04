@@ -29,11 +29,13 @@
         <i class="fas fa-spa"></i>
         {% elif category == 'Hanging' %}
         <i class="fas fa-seedling"></i>
+        {% elif category == 'Pots' %}
+        <i class="fas fa-archive"></i>
         {% elif category == 'Gardening Tools' %}
         <i class="fas fa-tools"></i>
         {% else %}
         <i class="fas fa-tag"></i>
-        {% endif %} {{ category }}{% if category != 'Gardening Tools' %} Plants{% endif %}
+        {% endif %} {{ category }}{% if category not in ['Gardening Tools', 'Pots'] %} Plants{% endif %}
       </a>
       {% endfor %}
     </div>

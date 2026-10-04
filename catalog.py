@@ -2,7 +2,7 @@
 
 CATEGORIES = [
     'Indoor', 'Outdoor', 'Flowering', 'Herbal', 'Fruit', 'Vegetable',
-    'Decorative', 'Hanging', 'Gardening Tools'
+    'Decorative', 'Hanging', 'Pots', 'Gardening Tools'
 ]
 
 # name, description, price, stock, local image, category, Wikipedia image lookup
@@ -79,6 +79,15 @@ CATALOG_PRODUCTS = [
     ('Philodendron Golden', 'Bright golden trailing foliage in a hanging pot', 549, 18, 'user-hanging-philodendron-golden.webp', 'Hanging', 'Philodendron hederaceum'),
     ('Philodendron Hanging Plant', 'Easy-care trailing greenery for indoor spaces', 499, 20, 'user-hanging-philodendron.webp', 'Hanging', 'Philodendron'),
     ('Spider Plant Hanging Pot', 'Arching striped foliage with baby plants', 349, 24, 'user-hanging-spider.jpeg', 'Hanging', 'Chlorophytum comosum'),
+
+    ('Aurelius Prism Ceramic Pot', 'Premium prism-shaped ceramic pot for elegant indoor display', 699, 20, 'Aurelius Prism Ceramic.webp', 'Pots', 'Flowerpot'),
+    ('IMAGINEA Hanging Flower Pot', 'Colourful hanging flower pot set for balconies and windows', 449, 25, 'IMAGINEA Hanging flower pots.webp', 'Pots', 'Hanging flower basket'),
+    ('Macrame Single Layer Hanger', 'Handcrafted single-layer macrame plant hanger for indoors', 299, 30, 'Macrame Single Layer hanger.webp', 'Pots', 'Macrame plant hanger'),
+    ('Macrame Three Layer Hanger', 'Boho three-layer macrame hanger for multiple small pots', 549, 18, 'Macrame Three Layer hanger.webp', 'Pots', 'Macrame plant hanger'),
+    ('Macrame Two Layer Hanger', 'Stylish two-layer macrame hanger for indoor corners', 399, 22, 'Macrame Two Layer.webp', 'Pots', 'Macrame plant hanger'),
+    ('Orbit Wooden Planter Set of 2', 'Modern wooden planters in a set of two for shelves', 899, 15, 'Orbit Wooden Planter -setof 2.webp', 'Pots', 'Flowerpot'),
+    ('Roma Ceramic Pot', 'Classic Roma-style ceramic pot for tabletops and counters', 499, 25, 'Roma Ceramic Pot.webp', 'Pots', 'Flowerpot'),
+    ('Sienna Terracotta Pots', 'Earthy terracotta pots with warm sienna finish for gardens', 349, 30, 'Sienna Terracotta Pots.webp', 'Pots', 'Terracotta'),
 
     ('Pruner', 'Sharp hand pruner for clean stem cutting', 599, 20, 'user-tool-pruner.jpeg', 'Gardening Tools', 'Pruning shears'),
     ('Spade', 'Sturdy digging spade for beds and borders', 799, 15, 'user-tool-spade.jpeg', 'Gardening Tools', 'Spade'),

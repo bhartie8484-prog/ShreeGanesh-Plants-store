@@ -4,16 +4,28 @@
 <section class="premium-hero">
   <div class="container premium-hero-shell">
     <div class="premium-hero-copy">
-      <div class="premium-eyebrow"><span></span> The living collection · 2026</div>
+      <div class="premium-eyebrow">
+        <span></span> The living collection · 2026
+      </div>
       <h1>Plants that make a house feel like <em>home.</em></h1>
-      <p>Thoughtfully selected greenery, flowering plants and garden essentials—chosen for real Indian homes and delivered with care.</p>
+      <p>
+        Thoughtfully selected greenery, flowering plants and garden
+        essentials—chosen for real Indian homes and delivered with care.
+      </p>
       <div class="premium-hero-actions">
-        <a href="{{ url_for('products') }}" class="premium-shop-btn">Explore the collection <i class="fas fa-arrow-right"></i></a>
+        <a href="{{ url_for('products') }}" class="premium-shop-btn"
+          >Explore the collection <i class="fas fa-arrow-right"></i
+        ></a>
         <a href="#shop-categories" class="premium-link">Shop by category</a>
       </div>
       <div class="premium-search">
         <i class="fas fa-search"></i>
-        <input id="hero-search-input" type="text" placeholder="Search Monstera, Rose, Tulsi..." aria-label="Search plants and gardening products" />
+        <input
+          id="hero-search-input"
+          type="text"
+          placeholder="Search Monstera, Rose, Tulsi..."
+          aria-label="Search plants and gardening products"
+        />
         <button class="search-btn" aria-label="Search">Search</button>
       </div>
       <div class="premium-assurance">
@@ -26,35 +38,72 @@
       <div class="premium-orbit premium-orbit-one"></div>
       <div class="premium-orbit premium-orbit-two"></div>
       <figure class="premium-main-image">
-        <img src="{{ url_for('static', filename='uploads/user-decorative-aglaonema-manila.webp') }}" alt="Aglaonema Manila Beauty plant" />
+        <img
+          src="{{ url_for('static', filename='uploads/user-decorative-aglaonema-manila.webp') }}"
+          alt="Aglaonema Manila Beauty plant"
+        />
       </figure>
       <figure class="premium-mini-image premium-mini-top">
-        <img src="{{ url_for('static', filename='uploads/user-flowering-rose.jpeg') }}" alt="Rose plant in bloom" />
+        <img
+          src="{{ url_for('static', filename='uploads/user-flowering-rose.jpeg') }}"
+          alt="Rose plant in bloom"
+        />
       </figure>
       <figure class="premium-mini-image premium-mini-bottom">
-        <img src="{{ url_for('static', filename='uploads/user-hanging-money-golden.webp') }}" alt="Golden money trailing plant" />
+        <img
+          src="{{ url_for('static', filename='uploads/user-hanging-money-golden.webp') }}"
+          alt="Golden money trailing plant"
+        />
       </figure>
       <div class="premium-product-card">
         <span class="premium-card-kicker">Editor's pick</span>
         <strong>Aglaonema Manila Beauty</strong>
         <div><span>Statement foliage</span><b>₹999</b></div>
-        <a href="{{ url_for('products', category='Decorative') }}" aria-label="View decorative plants"><i class="fas fa-arrow-right"></i></a>
+        <a
+          href="{{ url_for('products', category='Decorative') }}"
+          aria-label="View decorative plants"
+          ><i class="fas fa-arrow-right"></i
+        ></a>
       </div>
-      <div class="premium-rating"><strong>4.9</strong><span>★★★★★<small> Loved by plant parents</small></span></div>
+      <div class="premium-rating">
+        <strong>4.9</strong
+        ><span>★★★★★<small> Loved by plant parents</small></span>
+      </div>
     </div>
   </div>
 
   <div class="container premium-category-rail">
     <span class="premium-rail-label">Quick shop</span>
-    <a href="{{ url_for('products', category='Indoor') }}"><i class="fas fa-home"></i> Indoor</a>
-    <a href="{{ url_for('products', category='Outdoor') }}"><i class="fas fa-sun"></i> Outdoor</a>
-    <a href="{{ url_for('products', category='Flowering') }}"><i class="fas fa-seedling"></i> Flowering</a>
-    <a href="{{ url_for('products', category='Herbal') }}"><i class="fas fa-leaf"></i> Herbal</a>
-    <a href="{{ url_for('products', category='Fruit') }}"><i class="fas fa-apple-alt"></i> Fruit</a>
-    <a href="{{ url_for('products', category='Vegetable') }}"><i class="fas fa-carrot"></i> Vegetable</a>
-    <a href="{{ url_for('products', category='Decorative') }}"><i class="fas fa-spa"></i> Decorative</a>
-    <a href="{{ url_for('products', category='Hanging') }}"><i class="fas fa-seedling"></i> Hanging</a>
-    <a href="{{ url_for('products', category='Gardening Tools') }}"><i class="fas fa-tools"></i> Tools</a>
+    <a href="{{ url_for('products', category='Indoor') }}"
+      ><i class="fas fa-home"></i> Indoor</a
+    >
+    <a href="{{ url_for('products', category='Outdoor') }}"
+      ><i class="fas fa-sun"></i> Outdoor</a
+    >
+    <a href="{{ url_for('products', category='Flowering') }}"
+      ><i class="fas fa-seedling"></i> Flowering</a
+    >
+    <a href="{{ url_for('products', category='Herbal') }}"
+      ><i class="fas fa-leaf"></i> Herbal</a
+    >
+    <a href="{{ url_for('products', category='Fruit') }}"
+      ><i class="fas fa-apple-alt"></i> Fruit</a
+    >
+    <a href="{{ url_for('products', category='Vegetable') }}"
+      ><i class="fas fa-carrot"></i> Vegetable</a
+    >
+    <a href="{{ url_for('products', category='Decorative') }}"
+      ><i class="fas fa-spa"></i> Decorative</a
+    >
+    <a href="{{ url_for('products', category='Hanging') }}"
+      ><i class="fas fa-seedling"></i> Hanging</a
+    >
+    <a href="{{ url_for('products', category='Pots') }}"
+      ><i class="fas fa-archive"></i> Pots</a
+    >
+    <a href="{{ url_for('products', category='Gardening Tools') }}"
+      ><i class="fas fa-tools"></i> Tools</a
+    >
   </div>
 </section>
 
@@ -79,8 +128,8 @@
       <div class="badge-item">
         <div class="badge-icon"><i class="fas fa-leaf"></i></div>
         <div class="badge-text">
-          <strong>56 Curated Picks</strong>
-          <span>Across 7 categories</span>
+          <strong>62 Curated Picks</strong>
+          <span>Across 10 categories</span>
         </div>
       </div>
       <div class="badge-item">
@@ -102,54 +151,174 @@
         <span class="premium-section-kicker">Explore the collection</span>
         <h2>Category</h2>
       </div>
-      <p>Nine thoughtfully curated collections. Pick the one that fits your space, routine and growing style.</p>
+      <p>
+        Ten thoughtfully curated collections. Pick the one that fits your space,
+        routine and growing style.
+      </p>
     </div>
     <div class="premium-category-grid">
-      <a href="{{ url_for('products', category='Indoor') }}" class="premium-category-card premium-category-featured">
-        <img src="{{ url_for('static', filename='uploads/indoor-fiddle-leaf.webp') }}" alt="Fiddle Leaf Fig indoor plant" loading="lazy" />
-        <span class="premium-category-shade"></span><span class="premium-category-count">08 varieties</span>
-        <span class="premium-category-copy"><small>Bring nature inside</small><strong>Indoor Plants</strong><b>Explore collection <i class="fas fa-arrow-right"></i></b></span>
+      <a
+        href="{{ url_for('products', category='Indoor') }}"
+        class="premium-category-card premium-category-featured"
+      >
+        <img
+          src="{{ url_for('static', filename='uploads/indoor-fiddle-leaf.webp') }}"
+          alt="Fiddle Leaf Fig indoor plant"
+          loading="lazy"
+        />
+        <span class="premium-category-shade"></span
+        ><span class="premium-category-count">08 varieties</span>
+        <span class="premium-category-copy"
+          ><small>Bring nature inside</small><strong>Indoor Plants</strong
+          ><b>Explore collection <i class="fas fa-arrow-right"></i></b
+        ></span>
       </a>
-      <a href="{{ url_for('products', category='Outdoor') }}" class="premium-category-card">
-        <img src="{{ url_for('static', filename='uploads/outdoor-caladium.webp') }}" alt="Colourful Caladium outdoor plant" loading="lazy" />
-        <span class="premium-category-shade"></span><span class="premium-category-count">09 varieties</span>
-        <span class="premium-category-copy"><small>Made for sun and fresh air</small><strong>Outdoor Plants</strong><b>Shop now <i class="fas fa-arrow-right"></i></b></span>
+      <a
+        href="{{ url_for('products', category='Outdoor') }}"
+        class="premium-category-card"
+      >
+        <img
+          src="{{ url_for('static', filename='uploads/outdoor-caladium.webp') }}"
+          alt="Colourful Caladium outdoor plant"
+          loading="lazy"
+        />
+        <span class="premium-category-shade"></span
+        ><span class="premium-category-count">09 varieties</span>
+        <span class="premium-category-copy"
+          ><small>Made for sun and fresh air</small
+          ><strong>Outdoor Plants</strong
+          ><b>Shop now <i class="fas fa-arrow-right"></i></b
+        ></span>
       </a>
-      <a href="{{ url_for('products', category='Flowering') }}" class="premium-category-card premium-category-featured">
-        <img src="{{ url_for('static', filename='uploads/user-flowering-rose.jpeg') }}" alt="Rose flowering plant" loading="lazy" />
+      <a
+        href="{{ url_for('products', category='Flowering') }}"
+        class="premium-category-card premium-category-featured"
+      >
+        <img
+          src="{{ url_for('static', filename='uploads/user-flowering-rose.jpeg') }}"
+          alt="Rose flowering plant"
+          loading="lazy"
+        />
         <span class="premium-category-shade"></span>
         <span class="premium-category-count">08 varieties</span>
-        <span class="premium-category-copy"><small>Colour for every season</small><strong>Flowering<br />Plants</strong><b>Explore collection <i class="fas fa-arrow-right"></i></b></span>
+        <span class="premium-category-copy"
+          ><small>Colour for every season</small
+          ><strong>Flowering<br />Plants</strong
+          ><b>Explore collection <i class="fas fa-arrow-right"></i></b
+        ></span>
       </a>
-      <a href="{{ url_for('products', category='Herbal') }}" class="premium-category-card">
-        <img src="{{ url_for('static', filename='uploads/user-herbal-tulsi.jpeg') }}" alt="Fresh Tulsi herbal plant" loading="lazy" />
-        <span class="premium-category-shade"></span><span class="premium-category-count">08 varieties</span>
-        <span class="premium-category-copy"><small>Grow natural wellness</small><strong>Herbal Plants</strong><b>Shop now <i class="fas fa-arrow-right"></i></b></span>
+      <a
+        href="{{ url_for('products', category='Herbal') }}"
+        class="premium-category-card"
+      >
+        <img
+          src="{{ url_for('static', filename='uploads/user-herbal-tulsi.jpeg') }}"
+          alt="Fresh Tulsi herbal plant"
+          loading="lazy"
+        />
+        <span class="premium-category-shade"></span
+        ><span class="premium-category-count">08 varieties</span>
+        <span class="premium-category-copy"
+          ><small>Grow natural wellness</small><strong>Herbal Plants</strong
+          ><b>Shop now <i class="fas fa-arrow-right"></i></b
+        ></span>
       </a>
-      <a href="{{ url_for('products', category='Fruit') }}" class="premium-category-card">
-        <img src="{{ url_for('static', filename='uploads/user-fruit-lemon.webp') }}" alt="Lemon fruit plant" loading="lazy" />
-        <span class="premium-category-shade"></span><span class="premium-category-count">08 varieties</span>
-        <span class="premium-category-copy"><small>Harvest at home</small><strong>Fruit Plants</strong><b>Shop now <i class="fas fa-arrow-right"></i></b></span>
+      <a
+        href="{{ url_for('products', category='Fruit') }}"
+        class="premium-category-card"
+      >
+        <img
+          src="{{ url_for('static', filename='uploads/user-fruit-lemon.webp') }}"
+          alt="Lemon fruit plant"
+          loading="lazy"
+        />
+        <span class="premium-category-shade"></span
+        ><span class="premium-category-count">08 varieties</span>
+        <span class="premium-category-copy"
+          ><small>Harvest at home</small><strong>Fruit Plants</strong
+          ><b>Shop now <i class="fas fa-arrow-right"></i></b
+        ></span>
       </a>
-      <a href="{{ url_for('products', category='Vegetable') }}" class="premium-category-card">
-        <img src="{{ url_for('static', filename='uploads/user-vegetable-tomato.jpeg') }}" alt="Tomato vegetable plant" loading="lazy" />
-        <span class="premium-category-shade"></span><span class="premium-category-count">08 varieties</span>
-        <span class="premium-category-copy"><small>Your kitchen garden</small><strong>Vegetable Plants</strong><b>Shop now <i class="fas fa-arrow-right"></i></b></span>
+      <a
+        href="{{ url_for('products', category='Vegetable') }}"
+        class="premium-category-card"
+      >
+        <img
+          src="{{ url_for('static', filename='uploads/user-vegetable-tomato.jpeg') }}"
+          alt="Tomato vegetable plant"
+          loading="lazy"
+        />
+        <span class="premium-category-shade"></span
+        ><span class="premium-category-count">08 varieties</span>
+        <span class="premium-category-copy"
+          ><small>Your kitchen garden</small><strong>Vegetable Plants</strong
+          ><b>Shop now <i class="fas fa-arrow-right"></i></b
+        ></span>
       </a>
-      <a href="{{ url_for('products', category='Decorative') }}" class="premium-category-card">
-        <img src="{{ url_for('static', filename='uploads/user-decorative-aglaonema-butterfly.webp') }}" alt="Decorative Aglaonema plant" loading="lazy" />
-        <span class="premium-category-shade"></span><span class="premium-category-count">08 varieties</span>
-        <span class="premium-category-copy"><small>Style your space</small><strong>Decorative Plants</strong><b>Shop now <i class="fas fa-arrow-right"></i></b></span>
+      <a
+        href="{{ url_for('products', category='Decorative') }}"
+        class="premium-category-card"
+      >
+        <img
+          src="{{ url_for('static', filename='uploads/user-decorative-aglaonema-butterfly.webp') }}"
+          alt="Decorative Aglaonema plant"
+          loading="lazy"
+        />
+        <span class="premium-category-shade"></span
+        ><span class="premium-category-count">08 varieties</span>
+        <span class="premium-category-copy"
+          ><small>Style your space</small><strong>Decorative Plants</strong
+          ><b>Shop now <i class="fas fa-arrow-right"></i></b
+        ></span>
       </a>
-      <a href="{{ url_for('products', category='Hanging') }}" class="premium-category-card">
-        <img src="{{ url_for('static', filename='uploads/user-hanging-money-golden.webp') }}" alt="Hanging Golden Money Plant" loading="lazy" />
-        <span class="premium-category-shade"></span><span class="premium-category-count">08 varieties</span>
-        <span class="premium-category-copy"><small>Greenery from above</small><strong>Hanging Plants</strong><b>Shop now <i class="fas fa-arrow-right"></i></b></span>
+      <a
+        href="{{ url_for('products', category='Hanging') }}"
+        class="premium-category-card"
+      >
+        <img
+          src="{{ url_for('static', filename='uploads/user-hanging-money-golden.webp') }}"
+          alt="Hanging Golden Money Plant"
+          loading="lazy"
+        />
+        <span class="premium-category-shade"></span
+        ><span class="premium-category-count">08 varieties</span>
+        <span class="premium-category-copy"
+          ><small>Greenery from above</small><strong>Hanging Plants</strong
+          ><b>Shop now <i class="fas fa-arrow-right"></i></b
+        ></span>
       </a>
-      <a href="{{ url_for('products', category='Gardening Tools') }}" class="premium-category-card premium-category-tools">
-        <img src="{{ url_for('static', filename='uploads/user-tool-pruner.jpeg') }}" alt="Gardening pruner" loading="lazy" />
-        <span class="premium-category-shade"></span><span class="premium-category-count">08 essentials</span>
-        <span class="premium-category-copy"><small>Made for plant parents</small><strong>Gardening Tools</strong><b>Shop now <i class="fas fa-arrow-right"></i></b></span>
+      <a
+        href="{{ url_for('products', category='Pots') }}"
+        class="premium-category-card premium-category-pots"
+      >
+        <img
+          src="{{ url_for('static', filename='uploads/Roma Ceramic Pot.webp') }}"
+          alt="Ceramic and terracotta plant pots"
+          loading="lazy"
+          onerror="this.src='https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=900&h=700&fit=crop'"
+        />
+        <span class="premium-category-shade"></span
+        ><span class="premium-category-count">08 styles</span>
+        <span class="premium-category-copy"
+          ><small>Ceramic, terracotta &amp; macrame</small><strong>Pots</strong
+          ><b>Shop now <i class="fas fa-arrow-right"></i></b
+        ></span>
+      </a>
+      <a
+        href="{{ url_for('products', category='Gardening Tools') }}"
+        class="premium-category-card premium-category-tools"
+      >
+        <img
+          src="{{ url_for('static', filename='uploads/user-tool-pruner.jpeg') }}"
+          alt="Gardening pruner"
+          loading="lazy"
+        />
+        <span class="premium-category-shade"></span
+        ><span class="premium-category-count">08 essentials</span>
+        <span class="premium-category-copy"
+          ><small>Made for plant parents</small><strong>Gardening Tools</strong
+          ><b>Shop now <i class="fas fa-arrow-right"></i></b
+        ></span>
       </a>
     </div>
   </div>
@@ -169,7 +338,9 @@
       <div class="modern-product-card">
         <div class="product-badge-container">
           <span class="product-badge badge-bestseller">Bestseller</span>
-          <span class="product-badge badge-discount">{{ 10 + (product[0] % 9) }}% off</span>
+          <span class="product-badge badge-discount"
+            >{{ 10 + (product[0] % 9) }}% off</span
+          >
         </div>
         <div class="modern-product-image">
           <img
@@ -186,7 +357,9 @@
               <i class="fas fa-eye"></i> Quick View
             </a>
           </div>
-          <div class="image-rating"><strong>4.8 ★</strong><span>| {{ 100 + (product[0] * 7) }}</span></div>
+          <div class="image-rating">
+            <strong>4.8 ★</strong><span>| {{ 100 + (product[0] * 7) }}</span>
+          </div>
         </div>
         <div class="modern-product-info">
           <h3 class="product-name">{{ product[1] }}</h3>

@@ -47,6 +47,17 @@
             <li><a href="{{ url_for('products') }}">All Plants</a></li>
             <li><a href="{{ url_for('about') }}">About</a></li>
             <li><a href="{{ url_for('contact') }}">Contact</a></li>
+            <li>
+              <a
+                href="https://wa.me/919767873001"
+                target="_blank"
+                rel="noopener"
+                class="nav-whatsapp"
+                aria-label="WhatsApp us"
+              >
+                <i class="fab fa-whatsapp"></i> WhatsApp
+              </a>
+            </li>
             {% if session.user_id %}
             <li>
               <a href="{{ url_for('cart') }}"
@@ -88,31 +99,75 @@
     <!-- Main Content -->
     <main>{% block content %}{% endblock %}</main>
 
-    {% if not session.user_id and request.endpoint not in ['register', 'login'] %}
-    <div class="auth-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="signup-modal-title">
+    {% if not session.user_id and request.endpoint not in ['register', 'login']
+    %}
+    <div
+      class="auth-modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="signup-modal-title"
+    >
       <div class="auth-modal">
         <div class="auth-modal-brand">
           <span><i class="fas fa-leaf"></i></span>
           <strong>ShreeGanesh Plants Store</strong>
         </div>
         <h2 id="signup-modal-title">Create your account</h2>
-        <p>Sign up first to browse plants, add items to cart, and place orders.</p>
-        <form method="POST" action="{{ url_for('register') }}" class="auth-modal-form">
+        <p>
+          Sign up first to browse plants, add items to cart, and place orders.
+        </p>
+        <form
+          method="POST"
+          action="{{ url_for('register') }}"
+          class="auth-modal-form"
+        >
           <div class="form-group">
-            <label for="modal-name"><i class="fas fa-user"></i> Full Name</label>
-            <input type="text" id="modal-name" name="name" required placeholder="Enter your full name" autocomplete="name">
+            <label for="modal-name"
+              ><i class="fas fa-user"></i> Full Name</label
+            >
+            <input
+              type="text"
+              id="modal-name"
+              name="name"
+              required
+              placeholder="Enter your full name"
+              autocomplete="name"
+            />
           </div>
           <div class="form-group">
-            <label for="modal-email"><i class="fas fa-envelope"></i> Email</label>
-            <input type="email" id="modal-email" name="email" required placeholder="Enter your email" autocomplete="email">
+            <label for="modal-email"
+              ><i class="fas fa-envelope"></i> Email</label
+            >
+            <input
+              type="email"
+              id="modal-email"
+              name="email"
+              required
+              placeholder="Enter your email"
+              autocomplete="email"
+            />
           </div>
           <div class="form-group">
-            <label for="modal-password"><i class="fas fa-lock"></i> Password</label>
-            <input type="password" id="modal-password" name="password" required placeholder="Create a password" autocomplete="new-password">
+            <label for="modal-password"
+              ><i class="fas fa-lock"></i> Password</label
+            >
+            <input
+              type="password"
+              id="modal-password"
+              name="password"
+              required
+              placeholder="Create a password"
+              autocomplete="new-password"
+            />
           </div>
-          <button type="submit" class="auth-modal-submit">Sign Up & Continue</button>
+          <button type="submit" class="auth-modal-submit">
+            Sign Up & Continue
+          </button>
         </form>
-        <p class="auth-modal-login">Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+        <p class="auth-modal-login">
+          Already have an account?
+          <a href="{{ url_for('login') }}">Login here</a>
+        </p>
       </div>
     </div>
     {% endif %}
@@ -121,22 +176,146 @@
     <footer class="footer premium-footer">
       <div class="container">
         <div class="footer-promises" aria-label="Our service promises">
-          <div class="footer-promise"><i class="fas fa-truck"></i><span><strong>Pan-India delivery</strong><small>Carefully packed at every step</small></span></div>
-          <div class="footer-promise"><i class="fas fa-seedling"></i><span><strong>Healthy plants</strong><small>Handpicked by plant experts</small></span></div>
-          <div class="footer-promise"><i class="fas fa-headset"></i><span><strong>Plant care support</strong><small>Guidance whenever you need it</small></span></div>
+          <div class="footer-promise">
+            <i class="fas fa-truck"></i
+            ><span
+              ><strong>Pan-India delivery</strong
+              ><small>Carefully packed at every step</small></span
+            >
+          </div>
+          <div class="footer-promise">
+            <i class="fas fa-seedling"></i
+            ><span
+              ><strong>Healthy plants</strong
+              ><small>Handpicked by plant experts</small></span
+            >
+          </div>
+          <div class="footer-promise">
+            <i class="fas fa-headset"></i
+            ><span
+              ><strong>Plant care support</strong
+              ><small>Guidance whenever you need it</small></span
+            >
+          </div>
         </div>
         <div class="footer-content premium-footer-content">
           <div class="footer-section footer-brand">
-            <a href="{{ url_for('index') }}" class="footer-logo"><span class="footer-logo-mark"><i class="fas fa-leaf"></i></span><span>ShreeGanesh<small>Plants Store</small></span></a>
-            <p>Thoughtfully grown plants and dependable gardening essentials, delivered from our nursery to your home.</p>
-            <div class="social-links"><a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a><a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a><a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a><a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a></div>
+            <a href="{{ url_for('index') }}" class="footer-logo"
+              ><span class="footer-logo-mark"><i class="fas fa-leaf"></i></span
+              ><span>ShreeGanesh<small>Plants Store</small></span></a
+            >
+            <p>
+              Thoughtfully grown plants and dependable gardening essentials,
+              delivered from our nursery to your home.
+            </p>
+            <div class="social-links">
+              <a href="#" aria-label="Facebook"
+                ><i class="fab fa-facebook-f"></i></a
+              ><a href="#" aria-label="Instagram"
+                ><i class="fab fa-instagram"></i></a
+              ><a href="#" aria-label="Twitter"
+                ><i class="fab fa-twitter"></i></a
+              ><a href="#" aria-label="YouTube"
+                ><i class="fab fa-youtube"></i></a
+              ><a
+                href="https://wa.me/919767873001"
+                target="_blank"
+                rel="noopener"
+                aria-label="WhatsApp"
+                class="social-whatsapp"
+                ><i class="fab fa-whatsapp"></i
+              ></a>
+            </div>
           </div>
-          <div class="footer-section footer-links"><h4>Quick Links</h4><ul><li><a href="{{ url_for('index') }}">Home</a></li><li><a href="{{ url_for('products') }}">Shop Plants</a></li><li><a href="{{ url_for('contact') }}">Contact Us</a></li><li><a href="{{ url_for('about') }}">About Us</a></li></ul></div>
-          <div class="footer-section footer-links"><h4>Categories</h4><ul><li><a href="{{ url_for('products', category='Flowering') }}">Flowering Plants</a></li><li><a href="{{ url_for('products', category='Herbal') }}">Herbal Plants</a></li><li><a href="{{ url_for('products', category='Fruit') }}">Fruit Plants</a></li><li><a href="{{ url_for('products', category='Gardening Tools') }}">Gardening Tools</a></li></ul></div>
-          <div class="footer-section footer-links"><h4>Customer Care</h4><ul><li><a href="{{ url_for('policy', slug='shipping-policy') }}">Shipping Policy</a></li><li><a href="{{ url_for('policy', slug='return-policy') }}">Return Policy</a></li><li><a href="{{ url_for('faq') }}">FAQ</a></li><li><a href="{{ url_for('track_order') }}">Track Order</a></li></ul></div>
-          <div class="footer-section footer-contact"><span class="footer-contact-kicker">WE'RE HERE TO HELP</span><h4>Let's grow together.</h4><a class="footer-contact-item" href="https://wa.me/919767873001" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i><span><small>WhatsApp us</small>+91 9767873001</span></a><a class="footer-contact-item" href="mailto:bharti8484k@gmail.com"><i class="fas fa-envelope"></i><span><small>Email us</small>bharti8484k@gmail.com</span></a><div class="footer-contact-item"><i class="fas fa-map-marker-alt"></i><span><small>Visit us</small>Shanivar Peth, Pune - 411030</span></div></div>
+          <div class="footer-section footer-links">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="{{ url_for('index') }}">Home</a></li>
+              <li><a href="{{ url_for('products') }}">Shop Plants</a></li>
+              <li><a href="{{ url_for('contact') }}">Contact Us</a></li>
+              <li><a href="{{ url_for('about') }}">About Us</a></li>
+            </ul>
+          </div>
+          <div class="footer-section footer-links">
+            <h4>Categories</h4>
+            <ul>
+              <li>
+                <a href="{{ url_for('products', category='Flowering') }}"
+                  >Flowering Plants</a
+                >
+              </li>
+              <li>
+                <a href="{{ url_for('products', category='Herbal') }}"
+                  >Herbal Plants</a
+                >
+              </li>
+              <li>
+                <a href="{{ url_for('products', category='Fruit') }}"
+                  >Fruit Plants</a
+                >
+              </li>
+              <li>
+                <a href="{{ url_for('products', category='Pots') }}">Pots</a>
+              </li>
+              <li>
+                <a href="{{ url_for('products', category='Gardening Tools') }}"
+                  >Gardening Tools</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="footer-section footer-links">
+            <h4>Customer Care</h4>
+            <ul>
+              <li>
+                <a href="{{ url_for('policy', slug='shipping-policy') }}"
+                  >Shipping Policy</a
+                >
+              </li>
+              <li>
+                <a href="{{ url_for('policy', slug='return-policy') }}"
+                  >Return Policy</a
+                >
+              </li>
+              <li><a href="{{ url_for('faq') }}">FAQ</a></li>
+              <li><a href="{{ url_for('track_order') }}">Track Order</a></li>
+            </ul>
+          </div>
+          <div class="footer-section footer-contact">
+            <span class="footer-contact-kicker">WE'RE HERE TO HELP</span>
+            <h4>Let's grow together.</h4>
+            <a
+              class="footer-contact-item"
+              href="https://wa.me/919767873001"
+              target="_blank"
+              rel="noopener"
+              ><i class="fab fa-whatsapp"></i
+              ><span><small>WhatsApp us</small>+91 9767873001</span></a
+            ><a class="footer-contact-item" href="mailto:bharti8484k@gmail.com"
+              ><i class="fas fa-envelope"></i
+              ><span><small>Email us</small>bharti8484k@gmail.com</span></a
+            >
+            <div class="footer-contact-item">
+              <i class="fas fa-map-marker-alt"></i
+              ><span><small>Visit us</small>Shanivar Peth, Pune - 411030</span>
+            </div>
+          </div>
         </div>
-        <div class="footer-bottom premium-footer-bottom"><p>&copy; 2026 ShreeGanesh Plants Store. All rights reserved.</p><div class="footer-legal"><a href="{{ url_for('policy', slug='privacy-policy') }}">Privacy Policy</a><a href="{{ url_for('policy', slug='terms') }}">Terms &amp; Conditions</a></div><div class="footer-payments"><span><i class="fas fa-lock"></i> Secure payments</span><i class="fab fa-cc-visa"></i><i class="fab fa-cc-mastercard"></i><i class="fas fa-university"></i></div></div>
+        <div class="footer-bottom premium-footer-bottom">
+          <p>&copy; 2026 ShreeGanesh Plants Store. All rights reserved.</p>
+          <div class="footer-legal">
+            <a href="{{ url_for('policy', slug='privacy-policy') }}"
+              >Privacy Policy</a
+            ><a href="{{ url_for('policy', slug='terms') }}"
+              >Terms &amp; Conditions</a
+            >
+          </div>
+          <div class="footer-payments">
+            <span><i class="fas fa-lock"></i> Secure payments</span
+            ><i class="fab fa-cc-visa"></i><i class="fab fa-cc-mastercard"></i
+            ><i class="fas fa-university"></i>
+          </div>
+        </div>
       </div>
     </footer>
     <footer class="footer">
@@ -160,6 +339,14 @@
               ></a>
               <a href="#" aria-label="YouTube"
                 ><i class="fab fa-youtube"></i
+              ></a>
+              <a
+                href="https://wa.me/919767873001"
+                target="_blank"
+                rel="noopener"
+                aria-label="WhatsApp"
+                class="social-whatsapp"
+                ><i class="fab fa-whatsapp"></i
               ></a>
             </div>
           </div>
@@ -189,6 +376,9 @@
                 <a href="{{ url_for('products', category='Fruit') }}"
                   >Fruit Plants</a
                 >
+              </li>
+              <li>
+                <a href="{{ url_for('products', category='Pots') }}">Pots</a>
               </li>
               <li>
                 <a href="{{ url_for('products', category='Gardening Tools') }}"
@@ -283,6 +473,18 @@
         </div>
       </div>
     </footer>
+
+    <!-- Floating WhatsApp Button -->
+    <a
+      href="https://wa.me/919767873001"
+      class="whatsapp-float"
+      target="_blank"
+      rel="noopener"
+      aria-label="Chat with us on WhatsApp"
+    >
+      <i class="fab fa-whatsapp"></i>
+      <span class="whatsapp-float-label">Chat with us</span>
+    </a>
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
   </body>

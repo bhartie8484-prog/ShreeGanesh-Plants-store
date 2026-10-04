@@ -140,8 +140,8 @@ class PostgresCursorAdapter:
             'ON CONFLICT(user_id, product_id) DO UPDATE SET quantity = cart.quantity + 1'
         )
         query = query.replace(
-            'REPLACE INTO app_meta ("key", "value") VALUES (\'catalog_version\', \'7\')',
-            'INSERT INTO app_meta ("key", "value") VALUES (\'catalog_version\', \'7\') '
+            'REPLACE INTO app_meta ("key", "value") VALUES (\'catalog_version\', \'8\')',
+            'INSERT INTO app_meta ("key", "value") VALUES (\'catalog_version\', \'8\') '
             'ON CONFLICT ("key") DO UPDATE SET "value" = EXCLUDED."value"'
         )
         returning_id_inserts = ('INSERT INTO ORDERS ', 'INSERT INTO USERS ')
@@ -238,7 +238,7 @@ def ensure_catalog():
     cursor.execute("CREATE TABLE IF NOT EXISTS app_meta (`key` VARCHAR(50) PRIMARY KEY, `value` VARCHAR(50) NOT NULL)")
     cursor.execute("SELECT value FROM app_meta WHERE `key` = 'catalog_version'")
     version = cursor.fetchone()
-    if not version or version[0] != '7':
+    if not version or version[0] != '8':
         # Add newly curated products without deleting products referenced by orders.
         if version and version[0] == '4':
             indoor_renames = {
@@ -300,7 +300,7 @@ def ensure_catalog():
                     "INSERT INTO products (name, description, price, stock, image, category) VALUES (%s, %s, %s, %s, %s, %s)",
                     product
                 )
-        cursor.execute("REPLACE INTO app_meta (`key`, `value`) VALUES ('catalog_version', '7')")
+        cursor.execute("REPLACE INTO app_meta (`key`, `value`) VALUES ('catalog_version', '8')")
         db.commit()
     cursor.close()
     catalog_ready = True
