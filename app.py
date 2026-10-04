@@ -283,7 +283,7 @@ def ensure_store_schema():
 def prepare_catalog():
     # Static assets and the platform health check must remain available even
     # when the database is temporarily unavailable.
-    if request.endpoint in ('static', 'health'):
+    if request.endpoint in ('static', 'health', 'favicon'):
         return
     ensure_store_schema()
     ensure_catalog()
@@ -298,6 +298,10 @@ def health():
     except pymysql.MySQLError:
         app.logger.exception('Database health check failed')
         return {'status': 'error', 'database': 'unavailable'}, 503
+
+@app.route('/favicon.ico')
+def favicon():
+    return '', 204
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
