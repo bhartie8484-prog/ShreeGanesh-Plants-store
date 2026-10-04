@@ -11,16 +11,23 @@ The same settings are included in `render.yaml` for Blueprint deployments.
 
 ## Required environment variable
 
-Set `DATABASE_URL` in the Render dashboard to a publicly reachable MySQL URL:
+Set `DATABASE_URL` in the Render dashboard to the Aiven service URI. Both
+PostgreSQL and MySQL are supported.
+
+For the Aiven PostgreSQL service, use the full `Service URI` shown in Aiven:
 
 ```text
-mysql://USERNAME:PASSWORD@HOST:3306/plant_store
+postgres://avnadmin:PASSWORD@HOST:PORT/defaultdb?sslmode=require
 ```
 
-Do not use `localhost` in production. Import `database/schema.sql` into that
-database before opening the store. `SECRET_KEY` is generated automatically
-when deploying with the Blueprint; for a manually created service, add a long
-random `SECRET_KEY` in the Render dashboard.
+Click `CLICK TO REVEAL PASSWORD` in Aiven before copying. Do not use
+placeholder text like `actual_user`, `actual_password`, `mysql_host`, or
+`actual-hostname.provider.com`.
+
+The app creates the required tables and product catalogue automatically on
+startup. `SECRET_KEY` is generated automatically when deploying with the
+Blueprint; for a manually created service, add a long random `SECRET_KEY` in
+the Render dashboard.
 
 ## Local development
 

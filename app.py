@@ -1,5 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, abort, g
 import pymysql
+import sqlite3
+try:
+    import psycopg
+except ImportError:  # Local MySQL-only development can run without psycopg.
+    psycopg = None
 import os
 import uuid
 from datetime import datetime
@@ -32,23 +37,40 @@ app.config.from_pyfile('config/local.py', silent=True)
 # Production credentials are supplied by the hosting provider. DATABASE_URL
 # takes priority, while individual MYSQL_* variables remain supported.
 database_url = os.environ.get('DATABASE_URL')
+parsed_candidate = urlparse(database_url) if database_url else None
+if parsed_candidate and parsed_candidate.hostname in {'mysql_host', 'actual-hostname.provider.com'}:
+    database_url = None
+
+app.config['USE_SQLITE'] = bool(
+    os.environ.get('DATABASE_BACKEND', '').lower() == 'sqlite'
+    or (os.environ.get('RENDER') and not database_url)
+)
+app.config['SQLITE_PATH'] = os.environ.get(
+    'SQLITE_PATH', '/tmp/plant_store.db' if os.environ.get('RENDER') else 'plant_store.db'
+)
 if database_url:
     parsed_db_url = urlparse(database_url)
-    if parsed_db_url.scheme not in ('mysql', 'mysql+pymysql'):
-        raise RuntimeError('DATABASE_URL must use mysql:// or mysql+pymysql://')
-    app.config.update(
-        MYSQL_HOST=parsed_db_url.hostname,
-        MYSQL_PORT=parsed_db_url.port or 3306,
-        MYSQL_USER=unquote(parsed_db_url.username or ''),
-        MYSQL_PASSWORD=unquote(parsed_db_url.password or ''),
-        MYSQL_DB=parsed_db_url.path.lstrip('/'),
-    )
-    database_query = parse_qs(parsed_db_url.query)
-    app.config['MYSQL_SSL'] = (
-        database_query.get('ssl-mode', [''])[0].lower() in ('required', 'verify_ca', 'verify_identity')
-        or database_query.get('ssl', [''])[0].lower() in ('1', 'true', 'required')
-    )
+    if parsed_db_url.scheme in ('postgres', 'postgresql'):
+        app.config['USE_POSTGRES'] = True
+        app.config['DATABASE_URL'] = database_url
+    elif parsed_db_url.scheme in ('mysql', 'mysql+pymysql'):
+        app.config['USE_POSTGRES'] = False
+        app.config.update(
+            MYSQL_HOST=parsed_db_url.hostname,
+            MYSQL_PORT=parsed_db_url.port or 3306,
+            MYSQL_USER=unquote(parsed_db_url.username or ''),
+            MYSQL_PASSWORD=unquote(parsed_db_url.password or ''),
+            MYSQL_DB=parsed_db_url.path.lstrip('/'),
+        )
+        database_query = parse_qs(parsed_db_url.query)
+        app.config['MYSQL_SSL'] = (
+            database_query.get('ssl-mode', [''])[0].lower() in ('required', 'verify_ca', 'verify_identity')
+            or database_query.get('ssl', [''])[0].lower() in ('1', 'true', 'required')
+        )
+    else:
+        raise RuntimeError('DATABASE_URL must use postgres://, postgresql://, mysql://, or mysql+pymysql://')
 else:
+    app.config['USE_POSTGRES'] = False
     app.config.update(
         MYSQL_HOST=os.environ.get('MYSQL_HOST', app.config['MYSQL_HOST']),
         MYSQL_PORT=int(os.environ.get('MYSQL_PORT', app.config['MYSQL_PORT'])),
@@ -63,8 +85,124 @@ UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+class SQLiteCursorAdapter:
+    def __init__(self, cursor):
+        self.cursor = cursor
+
+    def execute(self, query, params=()):
+        query = query.replace('ORDER BY RAND()', 'ORDER BY RANDOM()').replace('%s', '?')
+        query = query.replace(
+            'ON DUPLICATE KEY UPDATE quantity = quantity + 1',
+            'ON CONFLICT(user_id, product_id) DO UPDATE SET quantity = quantity + 1'
+        )
+        return self.cursor.execute(query, params)
+
+    def fetchone(self):
+        return self.cursor.fetchone()
+
+    def fetchall(self):
+        return self.cursor.fetchall()
+
+    @property
+    def lastrowid(self):
+        return self.cursor.lastrowid
+
+    def close(self):
+        self.cursor.close()
+
+class SQLiteConnectionAdapter:
+    def __init__(self, path):
+        self.connection = sqlite3.connect(path, detect_types=sqlite3.PARSE_DECLTYPES, check_same_thread=False)
+        self.connection.execute('PRAGMA foreign_keys = ON')
+
+    def cursor(self):
+        return SQLiteCursorAdapter(self.connection.cursor())
+
+    def commit(self):
+        self.connection.commit()
+
+    def rollback(self):
+        self.connection.rollback()
+
+    def close(self):
+        self.connection.close()
+
+class PostgresCursorAdapter:
+    def __init__(self, cursor):
+        self.cursor = cursor
+        self._lastrowid = None
+
+    def execute(self, query, params=()):
+        query = query.replace('ORDER BY RAND()', 'ORDER BY RANDOM()')
+        query = query.replace('`key`', '"key"').replace('`value`', '"value"')
+        query = query.replace(
+            'ON DUPLICATE KEY UPDATE quantity = quantity + 1',
+            'ON CONFLICT(user_id, product_id) DO UPDATE SET quantity = cart.quantity + 1'
+        )
+        query = query.replace(
+            'REPLACE INTO app_meta ("key", "value") VALUES (\'catalog_version\', \'7\')',
+            'INSERT INTO app_meta ("key", "value") VALUES (\'catalog_version\', \'7\') '
+            'ON CONFLICT ("key") DO UPDATE SET "value" = EXCLUDED."value"'
+        )
+        if query.lstrip().upper().startswith('INSERT INTO ORDERS ') and ' RETURNING ' not in query.upper():
+            query = f"{query} RETURNING id"
+            self.cursor.execute(query, params)
+            self._lastrowid = self.cursor.fetchone()[0]
+            return None
+        self._lastrowid = None
+        return self.cursor.execute(query, params)
+
+    def fetchone(self):
+        return self.cursor.fetchone()
+
+    def fetchall(self):
+        return self.cursor.fetchall()
+
+    @property
+    def lastrowid(self):
+        return self._lastrowid
+
+    def close(self):
+        self.cursor.close()
+
+class PostgresConnectionAdapter:
+    def __init__(self, url):
+        if psycopg is None:
+            raise RuntimeError('psycopg is required for PostgreSQL DATABASE_URL')
+        self.connection = psycopg.connect(url)
+
+    def cursor(self):
+        return PostgresCursorAdapter(self.connection.cursor())
+
+    def commit(self):
+        self.connection.commit()
+
+    def rollback(self):
+        self.connection.rollback()
+
+    def close(self):
+        self.connection.close()
+
+def duplicate_record_errors():
+    errors = [pymysql.err.IntegrityError, sqlite3.IntegrityError]
+    if psycopg is not None:
+        errors.append(psycopg.errors.UniqueViolation)
+    return tuple(errors)
+
+def database_errors():
+    errors = [pymysql.MySQLError, sqlite3.Error]
+    if psycopg is not None:
+        errors.append(psycopg.Error)
+    return tuple(errors)
+
 def get_db():
     if 'db' not in g:
+        if app.config['USE_SQLITE']:
+            g.db = SQLiteConnectionAdapter(app.config['SQLITE_PATH'])
+            return g.db
+        if app.config.get('USE_POSTGRES'):
+            g.db = PostgresConnectionAdapter(app.config['DATABASE_URL'])
+            return g.db
         connection_options = dict(
             host=app.config['MYSQL_HOST'],
             port=app.config['MYSQL_PORT'],
@@ -171,6 +309,103 @@ def ensure_store_schema():
     if store_schema_ready:
         return
     db = get_db()
+    if app.config.get('USE_POSTGRES'):
+        cursor = db.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(100) NOT NULL,
+                email VARCHAR(100) UNIQUE NOT NULL,
+                password VARCHAR(255) NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS products (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(100) NOT NULL,
+                description TEXT,
+                price NUMERIC(10,2) NOT NULL,
+                stock INTEGER DEFAULT 0,
+                image VARCHAR(255),
+                category VARCHAR(50),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS cart (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+                quantity INTEGER DEFAULT 1,
+                added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(user_id, product_id)
+            )
+        """)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS orders (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                total_amount NUMERIC(10,2) NOT NULL,
+                status VARCHAR(50) DEFAULT 'pending',
+                order_number VARCHAR(32) UNIQUE,
+                payment_method VARCHAR(30),
+                payment_status VARCHAR(30) DEFAULT 'pending',
+                shipping_name VARCHAR(100),
+                shipping_phone VARCHAR(20),
+                shipping_address TEXT,
+                shipping_city VARCHAR(80),
+                shipping_state VARCHAR(80),
+                shipping_pincode VARCHAR(10),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS order_items (
+                id SERIAL PRIMARY KEY,
+                order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+                product_id INTEGER REFERENCES products(id),
+                quantity INTEGER NOT NULL,
+                price NUMERIC(10,2) NOT NULL
+            )
+        """)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS contacts (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(100) NOT NULL,
+                email VARCHAR(100) NOT NULL,
+                message TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS payments (
+                id SERIAL PRIMARY KEY,
+                order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+                transaction_id VARCHAR(50) UNIQUE NOT NULL,
+                method VARCHAR(30) NOT NULL,
+                amount NUMERIC(10,2) NOT NULL,
+                status VARCHAR(30) NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        db.commit()
+        cursor.close()
+        store_schema_ready = True
+        return
+    if app.config['USE_SQLITE']:
+        db.connection.executescript("""
+            CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL, password TEXT NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+            CREATE TABLE IF NOT EXISTS products (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, description TEXT, price REAL NOT NULL, stock INTEGER DEFAULT 0, image TEXT, category TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+            CREATE TABLE IF NOT EXISTS cart (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, product_id INTEGER NOT NULL, quantity INTEGER DEFAULT 1, added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, UNIQUE(user_id, product_id), FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE, FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE CASCADE);
+            CREATE TABLE IF NOT EXISTS orders (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, total_amount REAL NOT NULL, status TEXT DEFAULT 'pending', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, order_number TEXT UNIQUE, payment_method TEXT, payment_status TEXT DEFAULT 'pending', shipping_name TEXT, shipping_phone TEXT, shipping_address TEXT, shipping_city TEXT, shipping_state TEXT, shipping_pincode TEXT, FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE);
+            CREATE TABLE IF NOT EXISTS payments (id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER NOT NULL, transaction_id TEXT UNIQUE NOT NULL, method TEXT NOT NULL, amount REAL NOT NULL, status TEXT NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY(order_id) REFERENCES orders(id) ON DELETE CASCADE);
+            CREATE TABLE IF NOT EXISTS order_items (id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER NOT NULL, product_id INTEGER NOT NULL, quantity INTEGER NOT NULL, price REAL NOT NULL, FOREIGN KEY(order_id) REFERENCES orders(id) ON DELETE CASCADE, FOREIGN KEY(product_id) REFERENCES products(id));
+            CREATE TABLE IF NOT EXISTS contacts (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, email TEXT NOT NULL, message TEXT NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+        """)
+        db.commit()
+        store_schema_ready = True
+        return
     cursor = db.cursor()
     # A fresh production database is initialized automatically. All statements
     # are idempotent, so they are also safe for existing installations.
@@ -295,7 +530,7 @@ def health():
         cursor.execute('SELECT 1')
         cursor.close()
         return {'status': 'ok', 'database': 'connected'}, 200
-    except pymysql.MySQLError:
+    except database_errors():
         app.logger.exception('Database health check failed')
         return {'status': 'error', 'database': 'unavailable'}, 503
 
@@ -368,7 +603,7 @@ def register():
         try:
             cursor.execute("INSERT INTO users (name, email, password) VALUES (%s, %s, %s)",
                            (name, email, password))
-        except pymysql.err.IntegrityError:
+        except duplicate_record_errors():
             db.rollback()
             cursor.close()
             flash('An account with this email already exists.', 'error')
