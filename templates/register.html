@@ -13,12 +13,20 @@
                     <input type="text" id="name" name="name" required placeholder="Enter your full name">
                 </div>
                 <div class="form-group">
+                    <label for="phone"><i class="fas fa-phone"></i> Mobile Number</label>
+                    <input type="tel" id="phone" name="phone" required inputmode="numeric" pattern="[0-9 +()-]{10,18}" placeholder="Enter your mobile number" autocomplete="tel">
+                </div>
+                <div class="form-group">
                     <label for="email"><i class="fas fa-envelope"></i> Email</label>
                     <input type="email" id="email" name="email" required placeholder="Enter your email">
                 </div>
                 <div class="form-group">
                     <label for="password"><i class="fas fa-lock"></i> Password</label>
                     <input type="password" id="password" name="password" required placeholder="Create a password">
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password"><i class="fas fa-lock"></i> Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm_password" required placeholder="Confirm your password">
                 </div>
                 <button type="submit" class="btn-submit">Register</button>
             </form>

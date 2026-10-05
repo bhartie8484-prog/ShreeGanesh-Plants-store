@@ -1,5 +1,24 @@
 // Flash message close functionality
 document.addEventListener("DOMContentLoaded", function () {
+  const authModalOverlay = document.querySelector(".auth-modal-overlay");
+  const authModalClose = document.querySelector(".auth-modal-close");
+  if (authModalOverlay && authModalClose) {
+    authModalClose.addEventListener("click", () => {
+      authModalOverlay.classList.add("is-hidden");
+    });
+  }
+
+  document.querySelectorAll(".password-toggle").forEach((button) => {
+    button.addEventListener("click", () => {
+      const input = document.getElementById(button.dataset.passwordTarget);
+      if (!input) return;
+      const showing = input.type === "text";
+      input.type = showing ? "password" : "text";
+      button.setAttribute("aria-label", showing ? "Show password" : "Hide password");
+      button.querySelector("i").className = showing ? "fas fa-eye" : "fas fa-eye-slash";
+    });
+  });
+
   // Mobile navigation
   const navToggle = document.querySelector(".nav-toggle");
   const navMenu = document.querySelector(".nav-menu");
@@ -57,27 +76,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 5000);
   });
 
-  // Hero search functionality
-  const heroSearchInput = document.querySelector("#hero-search-input");
-  const searchBtn = document.querySelector(".search-btn");
-
-  if (heroSearchInput && searchBtn) {
-    searchBtn.addEventListener("click", function () {
-      const searchTerm = heroSearchInput.value.trim();
-      if (searchTerm) {
-        window.location.href = `/products?search=${encodeURIComponent(searchTerm)}`;
-      }
-    });
-
-    heroSearchInput.addEventListener("keypress", function (e) {
-      if (e.key === "Enter") {
-        const searchTerm = heroSearchInput.value.trim();
-        if (searchTerm) {
-          window.location.href = `/products?search=${encodeURIComponent(searchTerm)}`;
-        }
-      }
-    });
-  }
 
   // Add to cart animation
   const addToCartButtons = document.querySelectorAll('a[href*="add_to_cart"]');
@@ -271,57 +269,4 @@ function createFlashContainer() {
   container.className = "flash-container";
   document.body.appendChild(container);
   return container;
-}
-
-// Search functionality for products page
-function filterProductsBySearch() {
-  const searchParams = new URLSearchParams(window.location.search);
-  const searchTerm = searchParams.get("search");
-
-  if (searchTerm && document.querySelector(".products-grid")) {
-    const products = document.querySelectorAll(
-      ".product-card, .modern-product-card",
-    );
-    const lowerSearch = searchTerm.toLowerCase();
-    let visibleCount = 0;
-
-    products.forEach((product) => {
-      const name =
-        product.querySelector("h3, .product-name")?.textContent.toLowerCase() ||
-        "";
-      const category =
-        product
-          .querySelector(".product-category, .product-cat-tag")
-          ?.textContent.toLowerCase() || "";
-
-      if (name.includes(lowerSearch) || category.includes(lowerSearch)) {
-        product.style.display = "block";
-        visibleCount++;
-      } else {
-        product.style.display = "none";
-      }
-    });
-
-    // Show message if no results
-    if (visibleCount === 0) {
-      const grid = document.querySelector(".products-grid");
-      if (grid) {
-        grid.innerHTML = `
-                    <div style="grid-column: 1/-1; text-align: center; padding: 4rem;">
-                        <i class="fas fa-search" style="font-size: 4rem; color: #68b984; margin-bottom: 1rem;"></i>
-                        <h2>No plants found for "${searchTerm}"</h2>
-                        <p>Try searching with different keywords</p>
-                        <a href="/products" class="btn-primary" style="margin-top: 1rem;">View All Plants</a>
-                    </div>
-                `;
-      }
-    }
-  }
-}
-
-// Run search filter on page load
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", filterProductsBySearch);
-} else {
-  filterProductsBySearch();
 }

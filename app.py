@@ -318,9 +318,11 @@ def ensure_store_schema():
                 name VARCHAR(100) NOT NULL,
                 email VARCHAR(100) UNIQUE NOT NULL,
                 password VARCHAR(255) NOT NULL,
+                phone VARCHAR(20),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
+        cursor.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(20)")
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS products (
                 id SERIAL PRIMARY KEY,
@@ -396,7 +398,7 @@ def ensure_store_schema():
         return
     if app.config['USE_SQLITE']:
         db.connection.executescript("""
-            CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL, password TEXT NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+            CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL, password TEXT NOT NULL, phone TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
             CREATE TABLE IF NOT EXISTS products (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, description TEXT, price REAL NOT NULL, stock INTEGER DEFAULT 0, image TEXT, category TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
             CREATE TABLE IF NOT EXISTS cart (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, product_id INTEGER NOT NULL, quantity INTEGER DEFAULT 1, added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, UNIQUE(user_id, product_id), FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE, FOREIGN KEY(product_id) REFERENCES products(id) ON DELETE CASCADE);
             CREATE TABLE IF NOT EXISTS orders (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, total_amount REAL NOT NULL, status TEXT DEFAULT 'pending', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, order_number TEXT UNIQUE, payment_method TEXT, payment_status TEXT DEFAULT 'pending', shipping_name TEXT, shipping_phone TEXT, shipping_address TEXT, shipping_city TEXT, shipping_state TEXT, shipping_pincode TEXT, FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE);
@@ -404,6 +406,9 @@ def ensure_store_schema():
             CREATE TABLE IF NOT EXISTS order_items (id INTEGER PRIMARY KEY AUTOINCREMENT, order_id INTEGER NOT NULL, product_id INTEGER NOT NULL, quantity INTEGER NOT NULL, price REAL NOT NULL, FOREIGN KEY(order_id) REFERENCES orders(id) ON DELETE CASCADE, FOREIGN KEY(product_id) REFERENCES products(id));
             CREATE TABLE IF NOT EXISTS contacts (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, email TEXT NOT NULL, message TEXT NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
         """)
+        user_columns = [row[1] for row in db.connection.execute("PRAGMA table_info(users)").fetchall()]
+        if 'phone' not in user_columns:
+            db.connection.execute("ALTER TABLE users ADD COLUMN phone TEXT")
         db.commit()
         store_schema_ready = True
         return
@@ -416,6 +421,7 @@ def ensure_store_schema():
             name VARCHAR(100) NOT NULL,
             email VARCHAR(100) UNIQUE NOT NULL,
             password VARCHAR(255) NOT NULL,
+            phone VARCHAR(20),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
@@ -499,6 +505,11 @@ def ensure_store_schema():
         except pymysql.err.OperationalError as exc:
             if exc.args[0] != 1060:
                 raise
+    try:
+        cursor.execute("ALTER TABLE users ADD COLUMN phone VARCHAR(20)")
+    except pymysql.err.OperationalError as exc:
+        if exc.args[0] != 1060:
+            raise
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS payments (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -523,7 +534,10 @@ def prepare_catalog():
         return
     ensure_store_schema()
     ensure_catalog()
-    public_endpoints = {'index', 'register', 'login'}
+    public_endpoints = {
+        'index', 'register', 'login', 'products', 'product_detail', 'about',
+        'contact', 'faq', 'policy', 'track_order'
+    }
     if 'user_id' not in session and request.endpoint not in public_endpoints:
         return redirect(url_for('index'))
 
@@ -566,10 +580,29 @@ def index():
 
 @app.route('/products')
 def products():
-    category = request.args.get('category', None)
+    category = request.args.get('category', '').strip() or None
+    search_query = request.args.get('search', '').strip()
     cursor = get_db().cursor()
-    
-    if category == 'Flowering':
+
+    if search_query:
+        search_pattern = f'%{search_query.lower()}%'
+        if category:
+            cursor.execute(
+                """SELECT * FROM products
+                   WHERE stock > 0 AND category = %s
+                   AND (LOWER(name) LIKE %s OR LOWER(description) LIKE %s OR LOWER(category) LIKE %s)
+                   ORDER BY name""",
+                (category, search_pattern, search_pattern, search_pattern)
+            )
+        else:
+            cursor.execute(
+                """SELECT * FROM products
+                   WHERE stock > 0
+                   AND (LOWER(name) LIKE %s OR LOWER(description) LIKE %s OR LOWER(category) LIKE %s)
+                   ORDER BY name""",
+                (search_pattern, search_pattern, search_pattern)
+            )
+    elif category == 'Flowering':
         cursor.execute(
             """SELECT * FROM products
                WHERE stock > 0 AND category = %s
@@ -585,7 +618,13 @@ def products():
     
     cursor.close()
     
-    return render_template('products.html', products=all_products, categories=CATEGORIES, selected_category=category)
+    return render_template(
+        'products.html',
+        products=all_products,
+        categories=CATEGORIES,
+        selected_category=category,
+        search_query=search_query,
+    )
 
 @app.route('/product/<int:id>')
 def product_detail(id):
@@ -602,15 +641,25 @@ def register():
     if 'user_id' in session:
         return redirect(url_for('index'))
     if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        password = generate_password_hash(request.form['password'])
+        name = request.form['name'].strip()
+        email = request.form['email'].strip().lower()
+        raw_phone = ''.join(character for character in request.form.get('phone', '') if character.isdigit())
+        phone = raw_phone[2:] if len(raw_phone) == 12 and raw_phone.startswith('91') else raw_phone
+        raw_password = request.form['password']
+        confirm_password = request.form.get('confirm_password', raw_password)
+        if len(phone) != 10:
+            flash('Please enter a valid 10-digit mobile number.', 'error')
+            return render_template('register.html')
+        if raw_password != confirm_password:
+            flash('Password and confirm password do not match.', 'error')
+            return render_template('register.html')
+        password = generate_password_hash(raw_password)
         
         db = get_db()
         cursor = db.cursor()
         try:
-            cursor.execute("INSERT INTO users (name, email, password) VALUES (%s, %s, %s)",
-                           (name, email, password))
+            cursor.execute("INSERT INTO users (name, email, password, phone) VALUES (%s, %s, %s, %s)",
+                           (name, email, password, phone))
         except duplicate_record_errors():
             db.rollback()
             cursor.close()

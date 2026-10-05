@@ -18,16 +18,17 @@
         ></a>
         <a href="#shop-categories" class="premium-link">Shop by category</a>
       </div>
-      <div class="premium-search">
+      <form class="premium-search" action="{{ url_for('products') }}" method="get" role="search">
         <i class="fas fa-search"></i>
         <input
           id="hero-search-input"
           type="text"
+          name="search"
           placeholder="Search Monstera, Rose, Tulsi..."
           aria-label="Search plants and gardening products"
         />
-        <button class="search-btn" aria-label="Search">Search</button>
-      </div>
+        <button class="search-btn" type="submit" aria-label="Search">Search</button>
+      </form>
       <div class="premium-assurance">
         <span><i class="fas fa-check"></i> Healthy arrival guarantee</span>
         <span><i class="fas fa-truck"></i> Pan-India delivery</span>

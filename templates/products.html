@@ -2,19 +2,34 @@
 %} {% block content %}
 <section class="products-section">
   <div class="container">
+    {% if search_query %}
+    <div class="search-results-heading">
+      <span class="search-kicker">SEARCH RESULTS</span>
+      <h1 class="page-title">Results for “{{ search_query }}”</h1>
+      <p>{{ products|length }} product{{ '' if products|length == 1 else 's' }} found</p>
+    </div>
+    {% else %}
     <h1 class="page-title">{{ selected_category if selected_category else 'All Plants & Gardening' }}</h1>
+    {% endif %}
+
+    <form class="catalog-search" action="{{ url_for('products') }}" method="get" role="search">
+      <i class="fas fa-search" aria-hidden="true"></i>
+      <input type="search" name="search" value="{{ search_query }}" placeholder="Search plants, pots and tools" aria-label="Search products">
+      {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
+      <button type="submit">Search</button>
+    </form>
 
     <!-- Category Filter Buttons -->
     <div class="category-filter">
       <a
-        href="{{ url_for('products') }}"
+        href="{{ url_for('products', search=search_query) if search_query else url_for('products') }}"
         class="filter-btn {% if not selected_category %}active{% endif %}"
       >
         <i class="fas fa-leaf"></i> All Plants
       </a>
       {% for category in categories %}
       <a
-        href="{{ url_for('products', category=category) }}"
+        href="{{ url_for('products', category=category, search=search_query) if search_query else url_for('products', category=category) }}"
         class="filter-btn {% if selected_category == category %}active{% endif %}"
       >
         {% if category == 'Flowering' %}
@@ -78,8 +93,8 @@
       {% if not products %}
       <div class="empty-category">
         <i class="fas fa-seedling"></i>
-        <h2>No products found in {{ selected_category }}</h2>
-        <p>New products will be added here soon.</p>
+        <h2>{% if search_query %}No products found for “{{ search_query }}”{% else %}No products found in {{ selected_category }}{% endif %}</h2>
+        <p>{% if search_query %}Try another plant name or browse all products.{% else %}New products will be added here soon.{% endif %}</p>
         <a href="{{ url_for('products') }}" class="btn-primary">View all products</a>
       </div>
       {% endif %}
